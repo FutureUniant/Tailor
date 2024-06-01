@@ -1,0 +1,316 @@
+# work page i18n-en_US.
+# Copyright (C) 2024 ORGANIZATION
+# FutureAnt <zcyuniant@163.com>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Tailor V1.0.0\n"
+"POT-Creation-Date: 2024-01-30\n"
+"PO-Revision-Date: 2024-02-18\n"
+"Last-Translator: FutureAnt <zcyuniant@163.com>\n"
+"Language-Team: zh_CN <zcyuniant@163.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+msgid "Project Path"
+msgstr "Project Path"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "Please enter the correct project path!"
+msgstr "Please enter the correct project path!"
+
+msgid "Please choose one of the following languages:"
+msgstr "Please choose one of the following languages:"
+
+msgid "Please choose one of the following themes:"
+msgstr "Please choose one of the following themes:"
+
+msgid "Tailor Version 0.1.0.\n"
+msgstr "Tailor Version 0.1.0.\n"
+
+msgid "Rename Project"
+msgstr "Rename Project"
+
+msgid "Enter new project name:"
+msgstr "Enter new project name:"
+
+msgid "Please enter a valid project name, which cannot contain blank, <>:\"|?* or other special characters."
+msgstr "Please enter a valid project name, which cannot contain blank, <>:\"|?* or other special characters."
+
+msgid "Video Path"
+msgstr "Video Path"
+
+msgid "Please enter the correct video path!"
+msgstr "Please enter the correct video path!"
+
+msgid "Currently, Tailor can only handle a single video. More video processing versions are coming soon."
+msgstr "Currently, Tailor can only handle a single video. More video processing versions are coming soon."
+
+msgid "Save successful."
+msgstr "Save successful."
+
+msgid "Save failed."
+msgstr "Save failed."
+
+msgid "Warning."
+msgstr "Warning"
+
+msgid "Please import the video file you want to process first."
+msgstr "Please import the video file you want to process first."
+
+msgid "Please select the language of the video:"
+msgstr "Please select the language of the video:"
+
+msgid "Chinese"
+msgstr "Chinese"
+
+msgid "English"
+msgstr "English"
+
+msgid "Please select the scale of the model:"
+msgstr "Please select the scale of the model:"
+
+msgid "tiny"
+msgstr "tiny"
+
+msgid "base"
+msgstr "base"
+
+msgid "small"
+msgstr "small"
+
+msgid "medium"
+msgstr "medium"
+
+msgid "large-v2"
+msgstr "large-v2"
+
+msgid "Cut"
+msgstr "Cut"
+
+msgid "Please enter the minimum face size(0.0~1.0):"
+msgstr "Please enter the minimum face size(0.0~1.0):"
+
+msgid "Please enter a decimal number between 0 and 1."
+msgstr "Please enter a decimal number between 0 and 1."
+
+msgid "Please select the person's portrait to be cropped:"
+msgstr "Please select the person's portrait to be cropped:"
+
+msgid "There is already a video in the project, and Tailor can only handle one video at a time, so please create a new project."
+msgstr "There is already a video in the project, and Tailor can only handle one video at a time, so please create a new project."
+
+msgid "Please enter the resolution of the video (width × height):"
+msgstr "Please enter the resolution of the video (width × height):"
+
+msgid "width:"
+msgstr "width:"
+
+msgid "height:"
+msgstr "height:"
+
+msgid "Please select the emotion for the generated speech:"
+msgstr "Please select the emotion for the generated speech:"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Angry"
+msgstr "Angry"
+
+msgid "Happy"
+msgstr "Happy"
+
+msgid "Surprised"
+msgstr "Surprised"
+
+msgid "Sadness"
+msgstr "Sadness"
+
+msgid "Disgusted"
+msgstr "Disgusted"
+
+msgid "Scared"
+msgstr "Scared"
+
+msgid "Please select the speaker:"
+msgstr "Please select the speaker:"
+
+msgid "Male·Rich"
+msgstr "Male·Rich"
+
+msgid "Male·Mellow"
+msgstr "男·醇厚"
+
+msgid "Male·Dynamic"
+msgstr "Male·Dynamic"
+
+msgid "Female·Soothing"
+msgstr "Female·Soothing"
+
+msgid "Female·Crisp"
+msgstr "Female·Crisp"
+
+msgid "Female·Lively"
+msgstr "Female·Lively"
+
+msgid "Please enter the image path:"
+msgstr "Please enter the image path:"
+
+msgid "Browse"
+msgstr "Browse"
+
+msgid "Please enter the text to speech:"
+msgstr "Please enter the text to speech:"
+
+msgid "Generate"
+msgstr "Generate"
+
+msgid "Please enter the width in integer format!"
+msgstr "Please enter the width in integer format!"
+
+msgid "Please enter the height in integer format!"
+msgstr "Please enter the height in integer format!"
+
+msgid "No human face detected in the input image!"
+msgstr "No human face detected in the input image!"
+
+msgid "Font Size:"
+msgstr "Font Size:"
+
+msgid "Font Color:"
+msgstr "Font Color:"
+
+msgid "Choose Color"
+msgstr "Choose Color"
+
+msgid "Font Style:"
+msgstr "Font Style:"
+
+msgid "Choose"
+msgstr "Choose"
+
+msgid "Bian Tao"
+msgstr "Bian Tao"
+
+msgid "Cat Eat Black"
+msgstr "Cat Eat Black"
+
+msgid "Dou Yu"
+msgstr "Dou Yu"
+
+msgid "HanZi PinYin"
+msgstr "HanZi PinYin"
+
+msgid "Jing Nan"
+msgstr "Jing Nan"
+
+msgid "MengShen-Handwritten"
+msgstr "MengShen-Handwritten"
+
+msgid "MengShen-Regular"
+msgstr "MengShen-Regular"
+
+msgid "PoMo"
+msgstr "PoMo"
+
+msgid "SheHui"
+msgstr "SheHui"
+
+msgid "WenDao"
+msgstr "WenDao"
+
+msgid "Stroke Color:"
+msgstr "Stroke Color:"
+
+msgid "Stroke Width:"
+msgstr "Stroke Width:"
+
+msgid "Caption Position:"
+msgstr "Caption Position:"
+
+msgid "Caption Distance:"
+msgstr "Caption Distance:"
+
+msgid "Please input integer in Font Size."
+msgstr "Please input integer in Font Size."
+
+msgid "Please input integer in Stroke Width."
+msgstr "Please input integer in Stroke Width."
+
+msgid "Please input integer in Caption Distance."
+msgstr "Please input integer in Caption Distance."
+
+msgid "Color Generate"
+msgstr "Color Generate"
+
+msgid "Translate to:"
+msgstr "Translate to:"
+
+msgid "Translate"
+msgstr "Translate"
+
+msgid "Background Change"
+msgstr "Background Change"
+
+msgid "Picture Position:"
+msgstr "Picture Position:"
+
+msgid "Fill"
+msgstr "Fill"
+
+msgid "Center"
+msgstr "Center"
+
+msgid "Left-Top"
+msgstr "Left-Top"
+
+msgid "Left-Down"
+msgstr "Left-Down"
+
+msgid "Right-Top"
+msgstr "Right-Top"
+
+msgid "Right-Down"
+msgstr "Right-Down"
+
+msgid "Top-Center"
+msgstr "Top-Center"
+
+msgid "Down-Center"
+msgstr "Down-Center"
+
+msgid "Left-Center"
+msgstr "Left-Center"
+
+msgid "Right-Center"
+msgstr "Right-Center"
+
+msgid "Current FPS of video:"
+msgstr "Current FPS of video:"
+
+msgid "Expected FPS:(maximum of 60)"
+msgstr "Expected FPS:(maximum of 60)"
+
+msgid "Optimized Fluency"
+msgstr "Optimized Fluency"
+
+msgid "Please enter a valid FPS, more than current FPS and less than 60."
+msgstr "Please enter a valid FPS, more than current FPS and less than 60."
+
+msgid "Optimized Resolution"
+msgstr "Optimized Resolution"

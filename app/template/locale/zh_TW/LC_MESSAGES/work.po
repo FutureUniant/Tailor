@@ -1,0 +1,317 @@
+# work page i18n-zh_TW.
+# Copyright (C) 2024 ORGANIZATION
+# FutureAnt <zcyuniant@163.com>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Tailor V1.0.0\n"
+"POT-Creation-Date: 2024-01-30\n"
+"PO-Revision-Date: 2024-02-18\n"
+"Last-Translator: FutureAnt <zcyuniant@163.com>\n"
+"Language-Team: zh_CN <zcyuniant@163.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+msgid "Project Path"
+msgstr "工程路徑"
+
+msgid "Open"
+msgstr "打開"
+
+msgid "OK"
+msgstr "確認"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Warning"
+msgstr "警告"
+
+msgid "Please enter the correct project path!"
+msgstr "請輸入正確的工程路徑！"
+
+msgid "Please choose one of the following languages:"
+msgstr "請選擇以下一種語言："
+
+msgid "Please choose one of the following themes:"
+msgstr "請選擇以下一種主題："
+
+msgid "Tailor Version 0.1.0.\n"
+msgstr "Tailor 0.1.0 版本\n"
+
+msgid "Rename Project"
+msgstr "工程重命名"
+
+msgid "Enter new project name:"
+msgstr "請輸入新的工程名："
+
+msgid "Please enter a valid project name, which cannot contain blank, <>:\"|?* or other special characters."
+msgstr "請輸入有效的工程名，不能包含空格、<>:\"|?*等特殊字符"
+
+msgid "Video Path"
+msgstr "視頻路徑"
+
+msgid "Please enter the correct video path!"
+msgstr "請輸入正確的視頻路徑！"
+
+msgid "Currently, Tailor can only handle a single video. More video processing versions are coming soon."
+msgstr "目前Tailor只能處理單個視頻，更多視頻處理的版本敬請期待。"
+
+msgid "Save successful."
+msgstr "保存成功"
+
+msgid "Save failed."
+msgstr "保存失敗"
+
+msgid "Warning."
+msgstr "警告"
+
+msgid "Please import the video file you want to process first."
+msgstr "請先導入要處理的視頻文件。"
+
+msgid "Please select the language of the video:"
+msgstr "請選擇視頻的語言："
+
+msgid "Chinese"
+msgstr "中文"
+
+msgid "English"
+msgstr "英文"
+
+msgid "Please select the scale of the model:"
+msgstr "請選擇模型的規模："
+
+msgid "tiny"
+msgstr "超小模型"
+
+msgid "base"
+msgstr "小模型"
+
+msgid "small"
+msgstr "中模型"
+
+msgid "medium"
+msgstr "大模型"
+
+msgid "large-v2"
+msgstr "超大模型"
+
+msgid "Cut"
+msgstr "剪輯"
+
+msgid "Please enter the minimum face size(0.0~1.0):"
+msgstr "請輸入最小的人臉尺寸（0.0~1.0）："
+
+msgid "Please enter a decimal number between 0 and 1."
+msgstr "請輸入0到1的小數。"
+
+msgid "Please select the person's portrait to be cropped:"
+msgstr "請選擇裁剪所關注的人物頭像："
+
+msgid "There is already a video in the project, and Tailor can only handle one video at a time, so please create a new project."
+msgstr "工程已經存在一個視頻，而Tailor目前只能處理單個視頻，因此請創建新的工程。"
+
+msgid "Please enter the resolution of the video (width × height):"
+msgstr "請輸入視頻的分辨率（寬×高）："
+
+msgid "width:"
+msgstr "寬："
+
+msgid "height:"
+msgstr "高："
+
+msgid "Please select the emotion for the generated speech:"
+msgstr "請選擇生成語音的情緒："
+
+msgid "Normal"
+msgstr "普通"
+
+msgid "Angry"
+msgstr "生氣"
+
+msgid "Happy"
+msgstr "開心"
+
+msgid "Surprised"
+msgstr "驚訝"
+
+msgid "Sadness"
+msgstr "悲傷"
+
+msgid "Disgusted"
+msgstr "厭惡"
+
+msgid "Scared"
+msgstr "恐懼"
+
+msgid "Please select the speaker:"
+msgstr "請選擇語音角色："
+
+msgid "Male·Rich"
+msgstr "男·豐富"
+
+msgid "Male·Mellow"
+msgstr "男·醇厚"
+
+msgid "Male·Dynamic"
+msgstr "男·活力"
+
+msgid "Female·Soothing"
+msgstr "女·舒緩"
+
+msgid "Female·Crisp"
+msgstr "女·清脆"
+
+msgid "Female·Lively"
+msgstr "女·活潑"
+
+msgid "Please enter the image path:"
+msgstr "請輸入圖像的地址："
+
+msgid "Browse"
+msgstr "瀏覽"
+
+msgid "Please enter the text to speech:"
+msgstr "請輸入需要轉換為語音的文字："
+
+msgid "Generate"
+msgstr "生成"
+
+msgid "Please enter the width in integer format!"
+msgstr "請輸入整數形式的寬！"
+
+msgid "Please enter the height in integer format!"
+msgstr "請輸入整數形式的高！"
+
+msgid "No human face detected in the input image!"
+msgstr "輸入的圖像中沒有人物頭像！"
+
+msgid "Font Size:"
+msgstr "字體大小："
+
+msgid "Font Color:"
+msgstr "字體顏色："
+
+msgid "Choose Color"
+msgstr "顏色選擇"
+
+msgid "Font Style:"
+msgstr "字體風格："
+
+msgid "Choose"
+msgstr "選擇"
+
+msgid "Bian Tao"
+msgstr "扁桃體"
+
+msgid "Cat Eat Black"
+msgstr "貓啃什錦黑"
+
+msgid "Dou Yu"
+msgstr "斗魚體"
+
+msgid "HanZi PinYin"
+msgstr "漢字拼音"
+
+msgid "Jing Nan"
+msgstr "荊南緣默體"
+
+msgid "MengShen-Handwritten"
+msgstr "萌神手寫體"
+
+msgid "MengShen-Regular"
+msgstr "萌神體"
+
+msgid "PoMo"
+msgstr "潑墨體"
+
+msgid "SheHui"
+msgstr "社會體"
+
+msgid "WenDao"
+msgstr "文道潮黑"
+
+msgid "Stroke Color:"
+msgstr "描邊顏色："
+
+msgid "Stroke Width:"
+msgstr "描邊寬度："
+
+msgid "Caption Position:"
+msgstr "字幕位置："
+
+msgid "Caption Distance:"
+msgstr "字幕距離："
+
+msgid "Please input integer in Font Size."
+msgstr "字體大小請輸入整數。"
+
+msgid "Please input integer in Stroke Width."
+msgstr "描邊寬度請輸入整數。"
+
+msgid "Please input integer in Caption Distance."
+msgstr "字幕距離請輸入整數。"
+
+msgid "Color Generate"
+msgstr "色彩生成"
+
+msgid "Translate to:"
+msgstr "翻譯為："
+
+msgid "Translate"
+msgstr "翻譯"
+
+msgid "Background Change"
+msgstr "背景更換"
+
+msgid "Picture Position:"
+msgstr "圖像伸縮方式："
+
+msgid "Fill"
+msgstr "平鋪"
+
+msgid "Center"
+msgstr "中心縮放"
+
+msgid "Left-Top"
+msgstr "左上角縮放"
+
+msgid "Left-Down"
+msgstr "左下角縮放"
+
+msgid "Right-Top"
+msgstr "右上角縮放"
+
+msgid "Right-Down"
+msgstr "右下角縮放"
+
+msgid "Top-Center"
+msgstr "頂部中心縮放"
+
+msgid "Down-Center"
+msgstr "底部中心縮放"
+
+msgid "Left-Center"
+msgstr "左邊中心縮放"
+
+msgid "Right-Center"
+msgstr "右邊中心縮放"
+
+msgid "Current FPS of video:"
+msgstr "視頻當前FPS："
+
+msgid "Expected FPS:(maximum of 60)"
+msgstr "期望視頻的FPS：（最大60）"
+
+msgid "Optimized Fluency"
+msgstr "流暢度優化"
+
+msgid "Please enter a valid FPS, more than current FPS and less than 60."
+msgstr "請輸入一個有效的FPS，大於當前FPS值且小於等於60。"
+
+msgid "Optimized Resolution"
+msgstr "清晰度提升"
+

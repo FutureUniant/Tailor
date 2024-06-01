@@ -1,0 +1,61 @@
+# home page i18n-zh_TW.
+# Copyright (C) 2024 ORGANIZATION
+# FutureAnt <zcyuniant@163.com>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Tailor V1.0.0\n"
+"POT-Creation-Date: 2024-01-30\n"
+"PO-Revision-Date: 2024-02-18\n"
+"Last-Translator: FutureAnt <zcyuniant@163.com>\n"
+"Language-Team: zh_CN <zcyuniant@163.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+msgid "New"
+msgstr "新建"
+
+msgid "Open"
+msgstr "打開"
+
+msgid "Theme"
+msgstr "主題"
+
+msgid "Recent"
+msgstr "最近"
+
+msgid "Finish"
+msgstr "完成"
+
+msgid "Delete"
+msgstr "刪除"
+
+msgid "Are you sure to delete this project?"
+msgstr "是否確認刪除該工程？"
+
+msgid "OK"
+msgstr "確認"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "New Project"
+msgstr "新建工程"
+
+msgid "Project Name"
+msgstr "工程名稱"
+
+msgid "Project Path"
+msgstr "工程位置"
+
+msgid "Browse"
+msgstr "瀏覽"
+
+msgid "Warning"
+msgstr "警告"
+
+msgid "Please enter"
+msgstr "請輸入"
