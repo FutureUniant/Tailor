@@ -28,7 +28,6 @@
 - [快速入门](#getting-started)
 - [更新日志](#changelog)
 - [商务合作](#business)
-- [问题与反馈](#issue)
 - [捐赠者](#donators)
 - [赞助商](#sponsors)
 - [打赏支持](#support)

@@ -28,7 +28,6 @@
 - [Getting Started](#getting-started)
 - [Changelog](#changelog)
 - [Business](#business)
-- [Issue](#issue)
 - [Donators](#donators)
 - [Sponsors](#sponsors)
 - [Support](#support)
