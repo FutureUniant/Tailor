@@ -33,6 +33,7 @@
 - [打赏支持](#support)
 - [问题与反馈](#issue)
 - [特别感谢](#special-thanks)
+- [加入我们](#join-us)
 - [许可证](#license)
 
 </details>
@@ -189,6 +190,14 @@ python main.py
 - [cv_raft_video-frame-interpolation](https://modelscope.cn/models/iic/cv_raft_video-frame-interpolation/summary)
 - [cv_rrdb_image-super-resolution_x2](https://modelscope.cn/models/bubbliiiing/cv_rrdb_image-super-resolution_x2/summary)
 - [SadTalker](https://github.com/OpenTalker/SadTalker)
+
+
+<a id="join-us"></a>
+# 加入我们
+- QQ群：707910020  
+- 微信群：
+![微信群](assets/wechat-group.jpg)
+
 
 <a id="license"></a>
 # 许可证
