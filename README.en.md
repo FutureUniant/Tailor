@@ -4,7 +4,7 @@
   <h1>Tailor</h1>
 
   <p>
-  Tailor is a tool for intelligent video cutting, video generation, and video optimization.
+     Tailor is an amazing video editing magic tool! Its face and voice clipping are extremely precise. The face recognition can lock the character image, and the voice capture and clipping are uniquely charming. In terms of video generation, the oral broadcast generation endows the image with a soul, the subtitle generation is accurately fitted, the color generation makes black and white come alive, and the audio generation creates unlimited possibilities. In terms of optimization, the background replacement is like entering a fantasy world, and the fluency and clarity are also excellent. Tailor is not only a software, but also the key to creativity and wonderfulness. Both professionals and ordinary enthusiasts can make their works shine through it. Come and experience the shock and surprise it brings!
   </p>
 <div>
   <strong>
@@ -50,41 +50,41 @@ Tailor is a tool for intelligent video cropping, video generation, and video opt
 
 <a id="features"></a>
 # Features
-Tailor encompasses three major categories of video processing directions, including video editing, video generation, and video optimization, with a total of 10 methods. Below, they will be introduced in order:
+Tailor includes three major video processing directions such as video editing, video generation and video optimization, with a total of 10 methods. The following will be introduced in turn:
 
 ### VIDEO CUT
 ##### VIDEO CUT FACE
-Tailor automatically retrieves face information from videos and provides this information to users. Users can select the faces they want to focus on based on their needs, and Tailor will automatically crop the relevant videos accordingly.  
+Tailor has amazing face recognition technology, which can automatically capture every wonderful face moment from the video. With just a light click, you can select the face you are concerned about, and Tailor will automatically crop out the relevant video for you like magic, making your protagonist shine all the time!
 
 ##### VIDEO CUT AUDIO
-Tailor automatically extracts speech content from videos in the selected recognition language and displays it. Users can select the speech content they want to focus on based on their needs, and Tailor will automatically crop the content of the focused part.
+Tailor can also intelligently recognize the voice content in the video and display it clearly. You can select the interested voice part according to your own needs, and Tailor will accurately crop out the content you want, making your video more exciting.
 
 ### VIDEO GENERATE
 ##### VIDEO GENERATE BROADCAST
-Input an image with a face, select the voice tone for the speech, input the desired speech content, and Tailor will automatically generate an audio video with corresponding lip synchronization for you.
+Just upload an image with a face, select the favorite voice timbre, and input the voice content to be generated, and Tailor can instantly generate a audible video corresponding to the voice mouth shape for you. Let your creativity be easily realized and create a unique video work!
 
 ##### VIDEO GENERATE CAPTIONS
-Through intelligent recognition of audio and video content, it is automatically converted into text, and users can select the desired font and color. The subtitles will be displayed synchronously at the bottom of the video.  
+By intelligently recognizing the audio and video content, Tailor can automatically convert it into text and provide a variety of fonts and colors for you to choose. The subtitle will be perfectly synchronized with the video, making your video more understandable and attractive.
 
 ##### VIDEO GENERATE COLOR
-For black-and-white videos, Tailor can automatically add color to them and convert them into color videos with a single click.
+Tailor has a one-click black and white video coloring function, which can make those old black and white videos instantly glow with gorgeous colors. It's like going back in time and bringing the classics back to life!
 
 ##### VIDEO GENERATE AUDIO
-The main purpose of this function is to generate videos from static images and text. The static images will be converted into the visual part of the video, while the text will be transformed into the audio part of the video using text-to-speech technology.
+This function can give life to static images and text and turn them into vivid videos. The static image will become the image part of the video, and the text will become the voice part of the video through text-to-speech technology, allowing your creativity to extend infinitely.
 
 ##### VIDEO GENERATE LANGUAGE
-This feature can automatically and intelligently convert the language in the video to other target languages.
+Tailor has an amazing language replacement ability! It seems to be a magical language magician, which can instantly convert the voice in the video into the language you want. Let your video instantly have an international charm, be able to cross the language barrier, have the closest communication with audiences all over the world, and bring endless surprises and possibilities!
 
 
 ### VIDEO OPTIMIZE
 ##### VIDEO OPTIMIZE BACKGROUND
-Tailor will intelligently recognize the characters in the foreground and replace them with a user-predefined background image to create a new video.
+Tailor can intelligently recognize the characters in the foreground and separate them from the background. You can easily change the background image to create various fantasy scenes and make your video more fascinating.
 
 ##### VIDEO_OPTIMIZE_FLUENCY
-The main purpose of this feature is to improve the smoothness of the video, making originally stuttering or frame-skipping videos flow smoothly and seamlessly.
+Tailor uses advanced techniques to effectively improve the smoothness of the video. Make the originally stuck and frame-skipping video become smooth and silky, just like flowing clouds and flowing water, bringing the ultimate viewing experience to the audience.
 
 ##### VIDEO_OPTIMIZE_RESOLUTION
-This feature enhances the clarity of low-resolution videos, eliminating the need to watch "mosaic" visuals.
+For videos with lower clarity, Tailor can improve the clarity. Say goodbye to "mosaic" and make your video picture clearer and sharper, and the details are undoubtedly revealed.
 
 <a id="installation"></a>
 # Installation and Running
