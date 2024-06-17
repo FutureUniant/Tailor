@@ -168,8 +168,7 @@ class FaceAnalysis:
             face.save(save_path)
 
     def extract_segments(self, unique_face_infos, faces_ts, timestamps):
-        # TODO: 时间有点问题，还需要检查，同时，需要观察，同一时间出现的多张脸是不是可以正确裁剪
-        N = len(faces_ts)
+        N = len(timestamps)
         face_segments = dict()
         for unique_face_id, face_appear_ids in unique_face_infos.items():
             start_timestamps = list()
