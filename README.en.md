@@ -61,7 +61,7 @@ Tailor can also intelligently recognize the voice content in the video and displ
 
 ### VIDEO GENERATE
 ##### VIDEO GENERATE BROADCAST
-Just upload an image with a face, select the favorite voice timbre, and input the voice content to be generated, and Tailor can instantly generate a audible video corresponding to the voice mouth shape for you. Let your creativity be easily realized and create a unique video work!
+Just upload an image with a human face, select your favorite voice timbre, input the text content you want to generate, and Tailor can instantly generate a corresponding audible video with the voice lip shape for you. Let your creativity be easily realized and create a unique video work! 
 
 ##### VIDEO GENERATE CAPTIONS
 By intelligently recognizing the audio and video content, Tailor can automatically convert it into text and provide a variety of fonts and colors for you to choose. The subtitle will be perfectly synchronized with the video, making your video more understandable and attractive.
