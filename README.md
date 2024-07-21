@@ -195,7 +195,7 @@ python main.py
 <a id="join-us"></a>
 # 加入我们
 - 微信公众号：
-![微信公众号](assets/wechat-public.png)
+![微信公众号](assets/wechat-public.jpg)
 - 微信群：(二维码过期可通过  **微信公众号**  回复 **微信群**  获取最新群二维码)
 ![微信群](assets/wechat-group.jpg)
 - QQ群：707910020  
