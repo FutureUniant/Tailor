@@ -30,10 +30,10 @@
 - [商务合作](#business)
 - [捐赠者](#donators)
 - [赞助商](#sponsors)
+- [加入我们](#join-us)
 - [打赏支持](#support)
 - [问题与反馈](#issue)
 - [特别感谢](#special-thanks)
-- [加入我们](#join-us)
 - [许可证](#license)
 
 </details>
@@ -171,6 +171,16 @@ python main.py
 <a id="sponsors"></a>
 # 赞助商
 
+
+<a id="join-us"></a>
+# 加入我们
+- 微信公众号：
+![微信公众号](assets/wechat-public.jpg)
+- 微信群：(二维码过期可通过  **微信公众号**  回复 **微信群**  获取最新群二维码)
+![微信群](assets/wechat-group.jpg)
+- QQ群：707910020  
+
+
 <a id="support"></a>
 # 打赏支持  
 如果你觉得这个项目对你有帮助，并且想要支持项目的持续开发和维护，你可以通过以下方式进行打赏。
@@ -195,15 +205,6 @@ python main.py
 - [cv_raft_video-frame-interpolation](https://modelscope.cn/models/iic/cv_raft_video-frame-interpolation/summary)
 - [cv_rrdb_image-super-resolution_x2](https://modelscope.cn/models/bubbliiiing/cv_rrdb_image-super-resolution_x2/summary)
 - [SadTalker](https://github.com/OpenTalker/SadTalker)
-
-
-<a id="join-us"></a>
-# 加入我们
-- 微信公众号：
-![微信公众号](assets/wechat-public.jpg)
-- 微信群：(二维码过期可通过  **微信公众号**  回复 **微信群**  获取最新群二维码)
-![微信群](assets/wechat-group.jpg)
-- QQ群：707910020  
 
 
 <a id="license"></a>
