@@ -19,6 +19,15 @@ IMAGE_FILETYPES = {
 
 }
 
+AUDIO_EXTENSION = [".mp3", ".wav"]
+
+AUDIO_FILETYPES = {
+    "zh_cn": filetypes("音频文件", AUDIO_EXTENSION, low_upper=True),
+    "zh_tw": filetypes("音頻文件", AUDIO_EXTENSION, low_upper=True),
+    "en_us": filetypes("Audio File", AUDIO_EXTENSION, low_upper=True),
+
+}
+
 VIDEO_EXTENSION = [".mp4", ".wmv", ".rm", ".avi", ".flv", ".webm", ".wav", ".rmvb"]
 
 VIDEO_FILETYPES = {

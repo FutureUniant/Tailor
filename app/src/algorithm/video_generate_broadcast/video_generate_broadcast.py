@@ -7,17 +7,19 @@ from moviepy.editor import AudioFileClip, concatenate_audioclips, ImageClip
 
 @ALGORITHM.register(name="VIDEO_GENERATE_BROADCAST")
 def video_generate_broadcast(config):
-    # generate audio
-    emoti_voice = EmotiVoice(config["config"]["emoti_voice"])
-    generate_audio_paths = emoti_voice.infer(config["input"], config["output"])
-    audios = list()
-    for generate_audio_path in generate_audio_paths:
-        audio = AudioFileClip(generate_audio_path)
-        audios.append(audio)
-    output_audio = concatenate_audioclips(audios)
+    driven_type = config["input"]["driven_type"]
+    if driven_type == "text":
+        # generate audio
+        emoti_voice = EmotiVoice(config["config"]["emoti_voice"])
+        generate_audio_paths = emoti_voice.infer(config["input"], config["output"])
+        audios = list()
+        for generate_audio_path in generate_audio_paths:
+            audio = AudioFileClip(generate_audio_path)
+            audios.append(audio)
+        output_audio = concatenate_audioclips(audios)
 
-    driven_audio = config["input"]["driven_audio"]
-    output_audio.write_audiofile(driven_audio)
+        driven_audio = config["input"]["driven_audio"]
+        output_audio.write_audiofile(driven_audio)
 
     sadtalker = TailorSadTalker(config["config"]["sadtalker"])
     video_path = sadtalker.infer(config["input"], config["output"])

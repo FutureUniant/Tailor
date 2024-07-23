@@ -244,9 +244,10 @@ class TLRSingleTimeline(CTkFrame):
         # 0 is not press "playhead"; 1 is press "playhead"
         self._playhead_state = 0
 
+        self._item = None
+
         self.initial_variable()
 
-        self._item = None
         self.on_resize(None)
 
         self._tool_selected_display()
@@ -266,6 +267,14 @@ class TLRSingleTimeline(CTkFrame):
         self._jump_time = 2
 
     def initial_variable(self):
+        if self._item is not None:
+            self._item.delete()
+            self._item_height_top -= self._item_height
+        self._item = None
+
+        playhead_top = self._axis_height + self._axis_item_spacing
+        self._playhead.set_height(playhead_top, playhead_top)
+
         self._motion_center = -1  # 移动开始的位置，即移动的中心位置
 
         # 视频选择相关的参数
@@ -873,6 +882,9 @@ class TLRTimelineItem(CTkAppearanceModeBaseClass):
         self._item_rect_id = -1
         self._item_mid_line_id = -1
 
+        self._top_line = -1
+        self._down_line = -1
+
         self._selected = False
         self._selected_cuts = list()
 
@@ -887,6 +899,10 @@ class TLRTimelineItem(CTkAppearanceModeBaseClass):
             self._canvas.delete(self._item_rect_id)
         if self._item_mid_line_id != -1:
             self._canvas.delete(self._item_mid_line_id)
+        if self._top_line != -1:
+            self._canvas.delete(self._top_line)
+        if self._down_line != -1:
+            self._canvas.delete(self._down_line)
 
         for key, val in self._cut_part_objs.items():
             for obj_id in val:
@@ -897,10 +913,10 @@ class TLRTimelineItem(CTkAppearanceModeBaseClass):
 
         master_width = self.master.get_value("winfo_width")
         master_scalar_range = self.master.get_value("scalar_range")
-        self._canvas.create_line(-master_width, self._height_top,
+        self._top_line = self._canvas.create_line(-master_width, self._height_top,
                                  2 * master_width, self._height_top,
                                  fill=self._apply_appearance_mode(self._item_side_line_color))
-        self._canvas.create_line(-master_width, self._height_top + self._height,
+        self._down_line = self._canvas.create_line(-master_width, self._height_top + self._height,
                                   2 * master_width, self._height_top + self._height,
                                   fill=self._apply_appearance_mode(self._item_side_line_color))
         if master_scalar_range[0] > self._value_range[1]:
@@ -931,6 +947,21 @@ class TLRTimelineItem(CTkAppearanceModeBaseClass):
                 cut_objs = self.create_rectangle(loc_start, loc_end, selected=cut_selected_flag, alpha=0.5, width=3, value=f"{val[0]}_{val[1]}")
                 self._cut_part_objs[f"{val[0]}_{val[1]}"] = cut_objs
         self._playhead.playhead_raise()
+
+    def delete(self):
+        # 根据id清除canvas已有的object
+        if self._item_rect_id != -1:
+            self._canvas.delete(self._item_rect_id)
+        if self._item_mid_line_id != -1:
+            self._canvas.delete(self._item_mid_line_id)
+        if self._top_line != -1:
+            self._canvas.delete(self._top_line)
+        if self._down_line != -1:
+            self._canvas.delete(self._down_line)
+
+        for key, val in self._cut_part_objs.items():
+            for obj_id in val:
+                self._canvas.delete(obj_id)
 
     def in_item(self, x, y):
         if self._x_start < x < self._x_end and self._height_top < y < self._height_top + self._height:

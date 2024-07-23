@@ -10,7 +10,7 @@ from tkinter import filedialog
 from moviepy.editor import VideoFileClip
 
 from customtkinter.windows.widgets.theme import ThemeManager
-from customtkinter import CTkFrame, CTkFont, CTkToplevel, CTkScrollableFrame, CTkButton, CTkImage, CTkLabel, CTkEntry, CTkRadioButton, CTkTextbox, END, CTkComboBox
+from customtkinter import CTkFrame, CTkFont, CTkToplevel, CTkScrollableFrame, CTkButton, CTkImage, CTkLabel, CTkEntry, CTkRadioButton, CTkTextbox, END, CTkComboBox, CTkTabview
 
 from app.tailorwidgets.tailor_tree_view import TLRTreeView
 from app.tailorwidgets.tailor_menu_bar import TLRMenuBar
@@ -23,7 +23,7 @@ from app.tailorwidgets.tailor_image_checkbox import TLRImageCheckbox
 from app.tailorwidgets.tailor_table import TLRTable
 from app.tailorwidgets.tailor_modal import TLRModal
 from app.tailorwidgets.tailor_ask_color import TailorAskColor
-from app.tailorwidgets.default.filetypes import VIDEO_FILETYPES, VIDEO_EXTENSION, IMAGE_FILETYPES
+from app.tailorwidgets.default.filetypes import VIDEO_FILETYPES, VIDEO_EXTENSION, IMAGE_FILETYPES, AUDIO_EXTENSION, AUDIO_FILETYPES
 
 from app.config.config import Config
 from app.utils.paths import Paths
@@ -599,7 +599,10 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         output_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, video_name)
         pre_last_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, pre_last_video_name)
         if os.path.exists(output_video_path):
+            if os.path.exists(pre_last_video_path):
+                os.remove(pre_last_video_path)
             os.rename(output_video_path, pre_last_video_path)
+            self.video.path = pre_last_video_path
         else:
             pre_last_video_path = self.video.path
 
@@ -777,7 +780,10 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         output_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, video_name)
         pre_last_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, pre_last_video_name)
         if os.path.exists(output_video_path):
+            if os.path.exists(pre_last_video_path):
+                os.remove(pre_last_video_path)
             os.rename(output_video_path, pre_last_video_path)
+            self.video.path = pre_last_video_path
         else:
             pre_last_video_path = self.video.path
 
@@ -1125,11 +1131,42 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         height_entry.grid(row=0, column=3, sticky="ew")
         size_frame.grid(row=1, column=0, pady=(5, 0), sticky="ew")
 
-        prompt_label = CTkLabel(master=right_scroll,
+        image_label = CTkLabel(master=right_scroll,
+                              fg_color="transparent",
+                              text=self.translate("Please enter the image path:"))
+        image_label.grid(row=2, column=0, pady=(10, 0), sticky="w")
+        image_frame = CTkFrame(master=right_scroll)
+        image_entry_var = tkinter.StringVar(value="")
+        image_entry = CTkEntry(master=image_frame,
+                               textvariable=image_entry_var,
+                               state="disabled",
+                               )
+        image_entry.grid(row=0, column=0, sticky="ew")
+
+        def _image_browse_event(event=None):
+            entry_image_path = filedialog.askopenfilename(parent=self, filetypes=IMAGE_FILETYPES[self.language])
+            try:
+                image_entry_var.set(entry_image_path)
+            except:
+                image_entry_var.set("")
+        image_browse_button = CTkButton(master=image_frame,
+                                        width=80,
+                                        text=self.translate("Browse"),
+                                        command=_image_browse_event)
+        image_browse_button.grid(row=0, column=1, padx=5, sticky="e")
+        image_frame.grid(row=3, column=0, pady=(5, 0), sticky="ew")
+
+        text_audio_tabview = CTkTabview(right_scroll)
+        text_audio_tabview.grid(row=4, column=0, pady=(10, 0), sticky="w")
+        text_audio_tabview.add(self.translate("Text"))
+        text_audio_tabview.add(self.translate("Audio"))
+
+        #############  Text Generate Start  ###########
+        prompt_label = CTkLabel(master=text_audio_tabview.tab(self.translate("Text")),
                               fg_color="transparent",
                               text=self.translate("Please select the emotion for the generated speech:"))
-        prompt_label.grid(row=2, column=0, pady=(10, 0), sticky="w")
-        prompt_frame = CTkFrame(master=right_scroll)
+        prompt_label.grid(row=0, column=0, pady=(10, 0), sticky="w")
+        prompt_frame = CTkFrame(master=text_audio_tabview.tab(self.translate("Text")))
         prompt_options = [
             (self.translate("Normal"), "普通"),
             (self.translate("Angry"), "生气"),
@@ -1148,13 +1185,13 @@ class WorkWindow(CTkToplevel, TailorTranslate):
             radio_button.grid(row=row, column=column, pady=(10, 0), padx=(10, 0), sticky="w")
             if oid == 0:
                 prompt_radio_var.set(val)
-        prompt_frame.grid(row=3, column=0, sticky="ew")
+        prompt_frame.grid(row=1, column=0, sticky="ew")
 
-        speaker_label = CTkLabel(master=right_scroll,
+        speaker_label = CTkLabel(master=text_audio_tabview.tab(self.translate("Text")),
                               fg_color="transparent",
                               text=self.translate("Please select the speaker:"))
-        speaker_label.grid(row=4, column=0, pady=(10, 0), sticky="w")
-        speaker_frame = CTkFrame(master=right_scroll)
+        speaker_label.grid(row=2, column=0, pady=(10, 0), sticky="w")
+        speaker_frame = CTkFrame(master=text_audio_tabview.tab(self.translate("Text")))
         speaker_options = [
             (self.translate("Male·Rich"), 9017),
             (self.translate("Female·Soothing"), 8051),
@@ -1172,54 +1209,48 @@ class WorkWindow(CTkToplevel, TailorTranslate):
             radio_button.grid(row=row, column=column, pady=(10, 0), padx=(10, 0), sticky="w")
             if oid == 0:
                 speaker_radio_var.set(val)
-        speaker_frame.grid(row=5, column=0, sticky="ew")
+        speaker_frame.grid(row=3, column=0, sticky="ew")
 
-        image_label = CTkLabel(master=right_scroll,
-                              fg_color="transparent",
-                              text=self.translate("Please enter the image path:"))
-        image_label.grid(row=6, column=0, pady=(10, 0), sticky="w")
-        image_frame = CTkFrame(master=right_scroll)
-        image_entry_var = tkinter.StringVar(value="")
-        image_entry = CTkEntry(master=image_frame,
-                               textvariable=image_entry_var,
-                               state="disabled",
-                               )
-        image_entry.grid(row=0, column=0, sticky="ew")
-
-        def _browse_event(event=None):
-            entry_image_path = filedialog.askopenfilename(parent=self, filetypes=IMAGE_FILETYPES[self.language])
-            try:
-                image_entry_var.set(entry_image_path)
-            except:
-                image_entry_var.set("")
-        image_browse_button = CTkButton(master=image_frame,
-                                        width=80,
-                                        text=self.translate("Browse"),
-                                        command=_browse_event)
-        image_browse_button.grid(row=0, column=1, padx=5, sticky="e")
-        image_frame.grid(row=7, column=0, pady=(5, 0), sticky="ew")
-
-        text_label = CTkLabel(master=right_scroll,
+        text_label = CTkLabel(master=text_audio_tabview.tab(self.translate("Text")),
                                fg_color="transparent",
                                text=self.translate("Please enter the text to speech:"))
-        text_label.grid(row=8, column=0, pady=(10, 0), sticky="w")
+        text_label.grid(row=4, column=0, pady=(10, 0), sticky="w")
 
-        textbox = CTkTextbox(master=right_scroll,)
-        textbox.grid(row=9, column=0, pady=(5, 0), sticky="ew")
+        textbox = CTkTextbox(master=text_audio_tabview.tab(self.translate("Text")))
+        textbox.grid(row=5, column=0, pady=(5, 0),  sticky="ew")
+        #############  Text Generate End    ###########
+
+        #############  Audio Generate Start  ###########
+        audio_label = CTkLabel(master=text_audio_tabview.tab(self.translate("Audio")),
+                              fg_color="transparent",
+                              text=self.translate("Please enter the audio path:"))
+        audio_label.grid(row=0, column=0, pady=(10, 0), sticky="w")
+        audio_frame = CTkFrame(master=text_audio_tabview.tab(self.translate("Audio")))
+        audio_entry_var = tkinter.StringVar(value="")
+        audio_entry = CTkEntry(master=audio_frame,
+                               textvariable=audio_entry_var,
+                               state="disabled",
+                               )
+        audio_entry.grid(row=0, column=0, padx=5, sticky="ew")
+
+        def _audio_browse_event(event=None):
+            entry_audio_path = filedialog.askopenfilename(parent=self, filetypes=AUDIO_FILETYPES[self.language])
+            try:
+                audio_entry_var.set(entry_audio_path)
+            except:
+                audio_entry_var.set("")
+        audio_browse_button = CTkButton(master=audio_frame,
+                                        width=80,
+                                        text=self.translate("Browse"),
+                                        command=_audio_browse_event)
+        audio_browse_button.grid(row=0, column=1, padx=5, sticky="e")
+        audio_frame.grid(row=3, column=0, pady=(5, 0), sticky="ew")
+        #############  Audio Generate End    ###########
 
         def _video_generate_broadcast():
             try:
                 width = int(width_entry.get())
                 height = int(height_entry.get())
-                textbox_value = textbox.get("0.0", "end")
-
-                text_path = os.path.join(operation_file, "input.txt")
-                temp_path = os.path.join(operation_file, "temp.txt")
-                audio_path = os.path.join(operation_file, "audios")
-                driven_audio = os.path.join(operation_file, "audio.wav")
-                result_dir = os.path.join(operation_file, "output")
-                os.makedirs(audio_path, exist_ok=True)
-                os.makedirs(result_dir, exist_ok=True)
 
                 origin_image_path = image_entry_var.get()
                 image_path = os.path.join(operation_file, f"image{os.path.splitext(origin_image_path)[1]}")
@@ -1233,8 +1264,29 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                 new_image.paste(paste_image, (x, y))
                 new_image.save(image_path)
 
-                with open(text_path, "w+", encoding=Config.ENCODING) as f:
-                    f.write(textbox_value)
+                result_dir = os.path.join(operation_file, "output")
+                os.makedirs(result_dir, exist_ok=True)
+                text_path = None
+                temp_path = None
+                audio_path = None
+                if text_audio_tabview.get() == self.translate("Text"):
+                    driven_type = "text"
+                    textbox_value = textbox.get("0.0", "end")
+
+                    text_path = os.path.join(operation_file, "input.txt")
+                    temp_path = os.path.join(operation_file, "temp.txt")
+                    audio_path = os.path.join(operation_file, "audios")
+                    driven_audio = os.path.join(operation_file, "audio.wav")
+                    os.makedirs(audio_path, exist_ok=True)
+
+                    with open(text_path, "w+", encoding=Config.ENCODING) as f:
+                        f.write(textbox_value)
+                else:
+                    driven_type = "audio"
+                    origin_audio_path = audio_entry_var.get()
+                    driven_audio = os.path.join(operation_file, f"audio{os.path.splitext(origin_audio_path)[1]}")
+                    shutil.copy(origin_audio_path, driven_audio)
+
                 input_data = {
                     "config": {
                         "emoti_voice": {
@@ -1262,6 +1314,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                         },
                     },
                     "input": {
+                        "driven_type": driven_type,
                         "text_path": text_path,
                         "temp_path": temp_path,
                         "source_image": image_path,
@@ -1319,16 +1372,28 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                               bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
                 self._dialog_show(message_box)
                 return
-            textbox_value = textbox.get("0.0", "end")
-            if textbox_value is None or textbox_value.replace("\n", "").replace(" ", "") == "":
-                message_box = TLRMessageBox(self.master,
-                              icon="warning",
-                              title=self.translate("Warning"),
-                              message=self.translate("Please enter the text you want to convert to speech."),
-                              button_text=[self.translate("OK")],
-                              bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
-                self._dialog_show(message_box)
-                return
+
+            if text_audio_tabview.get() == self.translate("Text"):
+                textbox_value = textbox.get("0.0", "end")
+                if textbox_value is None or textbox_value.replace("\n", "").replace(" ", "") == "":
+                    message_box = TLRMessageBox(self.master,
+                                  icon="warning",
+                                  title=self.translate("Warning"),
+                                  message=self.translate("Please enter the text you want to convert to speech."),
+                                  button_text=[self.translate("OK")],
+                                  bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
+                    self._dialog_show(message_box)
+                    return
+            else:
+                if not os.path.exists(audio_entry_var.get()):
+                    message_box = TLRMessageBox(self.master,
+                                                icon="warning",
+                                                title=self.translate("Warning"),
+                                                message=self.translate("Please enter a valid audio path."),
+                                                button_text=[self.translate("OK")],
+                                                bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
+                    self._dialog_show(message_box)
+                    return
 
             TLRModal(self,
                      _video_generate_broadcast,
@@ -1601,7 +1666,10 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         output_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, video_name)
         pre_last_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, pre_last_video_name)
         if os.path.exists(output_video_path):
+            if os.path.exists(pre_last_video_path):
+                os.remove(pre_last_video_path)
             os.rename(output_video_path, pre_last_video_path)
+            self.video.path = pre_last_video_path
         else:
             pre_last_video_path = self.video.path
 
@@ -1732,7 +1800,10 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         output_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, video_name)
         pre_last_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, pre_last_video_name)
         if os.path.exists(output_video_path):
+            if os.path.exists(pre_last_video_path):
+                os.remove(pre_last_video_path)
             os.rename(output_video_path, pre_last_video_path)
+            self.video.path = pre_last_video_path
         else:
             pre_last_video_path = self.video.path
 
@@ -1986,7 +2057,10 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         output_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, video_name)
         pre_last_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, pre_last_video_name)
         if os.path.exists(output_video_path):
+            if os.path.exists(pre_last_video_path):
+                os.remove(pre_last_video_path)
             os.rename(output_video_path, pre_last_video_path)
+            self.video.path = pre_last_video_path
         else:
             pre_last_video_path = self.video.path
 
@@ -2075,7 +2149,10 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         output_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, video_name)
         pre_last_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, pre_last_video_name)
         if os.path.exists(output_video_path):
+            if os.path.exists(pre_last_video_path):
+                os.remove(pre_last_video_path)
             os.rename(output_video_path, pre_last_video_path)
+            self.video.path = pre_last_video_path
         else:
             pre_last_video_path = self.video.path
 
@@ -2229,7 +2306,10 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         output_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, video_name)
         pre_last_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, pre_last_video_name)
         if os.path.exists(output_video_path):
+            if os.path.exists(pre_last_video_path):
+                os.remove(pre_last_video_path)
             os.rename(output_video_path, pre_last_video_path)
+            self.video.path = pre_last_video_path
         else:
             pre_last_video_path = self.video.path
 
@@ -2326,7 +2406,10 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         output_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, video_name)
         pre_last_video_path = os.path.join(self.app.project_path, Config.PROJECT_VIDEOS, pre_last_video_name)
         if os.path.exists(output_video_path):
+            if os.path.exists(pre_last_video_path):
+                os.remove(pre_last_video_path)
             os.rename(output_video_path, pre_last_video_path)
+            self.video.path = pre_last_video_path
         else:
             pre_last_video_path = self.video.path
 

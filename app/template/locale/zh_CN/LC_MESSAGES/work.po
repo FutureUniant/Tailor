@@ -61,6 +61,9 @@ msgstr "请输入正确的视频路径！"
 msgid "Currently, Tailor can only handle a single video. More video processing versions are coming soon."
 msgstr "目前Tailor只能处理单个视频，更多视频处理的版本敬请期待。"
 
+msgid "There is no video here. Please import a video first."
+msgstr "目前没有一个待处理视频，请先导入一个视频。"
+
 msgid "Save successful."
 msgstr "保存成功"
 
@@ -315,3 +318,21 @@ msgstr "请输入一个有效的FPS，大于当前FPS值且小于等于60。"
 
 msgid "Optimized Resolution"
 msgstr "清晰度提升"
+
+msgid "Text"
+msgstr "文字"
+
+msgid "Audio"
+msgstr "音频"
+
+msgid "Please enter the audio path:"
+msgstr "请输入音频地址："
+
+msgid "Please enter a valid audio path."
+msgstr "请输入一个有效的音频地址。"
+
+msgid "Please enter a valid image path."
+msgstr "请输入一个有效的图像地址。"
+
+msgid "Please enter the text you want to convert to speech."
+msgstr "请输入要转换为语音的文本。"

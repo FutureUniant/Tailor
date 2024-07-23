@@ -149,6 +149,11 @@ Video Processing
 <a id="changelog"></a>
 # Changelog
 * 2024/05/31: The first version of Tailor is officially launched!
+* 2024/07/23: 
+1. Support voice driven broadcast generate function;  
+2. Added a model checking mechanism to avoid model damage caused by network issues that require manual repair;  
+3. Fix interface switching bug;  
+4. Fix bugs in video multi process processing.  
 
 <a id="business"></a>
 # Business

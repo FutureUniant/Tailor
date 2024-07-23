@@ -241,7 +241,10 @@ class TLRFileDialog(CTkToplevel):
 
     def get_file_path(self):
         self.master.wait_window(self)
-        return self._file_path
+        return_file_path = ""
+        if self._flag:
+            return_file_path = self._file_path
+        return return_file_path
 
 
 

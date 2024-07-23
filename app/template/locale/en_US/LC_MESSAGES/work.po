@@ -60,6 +60,9 @@ msgstr "Please enter the correct video path!"
 msgid "Currently, Tailor can only handle a single video. More video processing versions are coming soon."
 msgstr "Currently, Tailor can only handle a single video. More video processing versions are coming soon."
 
+msgid "There is no video here. Please import a video first."
+msgstr "There is no video here. Please import a video first."
+
 msgid "Save successful."
 msgstr "Save successful."
 
@@ -314,3 +317,21 @@ msgstr "Please enter a valid FPS, more than current FPS and less than 60."
 
 msgid "Optimized Resolution"
 msgstr "Optimized Resolution"
+
+msgid "Text"
+msgstr "Text"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Please enter the audio path:"
+msgstr "Please enter the audio path:"
+
+msgid "Please enter a valid audio path."
+msgstr "Please enter a valid audio path."
+
+msgid "Please enter a valid image path."
+msgstr "Please enter a valid image path."
+
+msgid "Please enter the text you want to convert to speech."
+msgstr "Please enter the text you want to convert to speech."

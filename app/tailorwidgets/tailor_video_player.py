@@ -96,6 +96,12 @@ class TLRVideoPlayer(CTkFrame):
             self._video_frame['image'] = frame
             self._video_frame.image = frame
             self._video_frame.update()
+        else:
+            blank_image = Image.new("RGB", (self._video_width, self._video_height), (43, 43, 43))
+            frame = ImageTk.PhotoImage(blank_image)
+            self._video_frame['image'] = frame
+            self._video_frame.image = frame
+            self._video_frame.update()
 
     def play(self):
         self.set_video_path()
@@ -212,12 +218,12 @@ class TLRVideoPlayer(CTkFrame):
             self._video = VideoFileClip(self._video_path)
             self._audio = self._video.audio
             self._duration = self._video.duration
-            self.initial_video()
         else:
             self._video_path = None
             self._video      = None
             self._audio      = None
             self._duration   = 0
+        self.initial_video()
 
     def set_start_time(self, start_time):
         self._start_time = start_time
