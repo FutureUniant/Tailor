@@ -1,4 +1,5 @@
 import os
+import logging
 import datetime
 from typing import List
 
@@ -8,6 +9,7 @@ import srt
 from tqdm import tqdm
 import whisper
 
+from app.src.utils.logger import Logger
 from app.src.algorithm.base.whisper.type import SPEECH_ARRAY_INDEX, LANG
 
 from app.utils.paths import Paths
@@ -29,16 +31,29 @@ _MODELS = {
 
 
 class WhisperModel:
-    def __init__(self, config):
+    def __init__(self, config, logger):
         self.config       = config
         self.sample_rate  = config["sample_rate"]
         self.device       = config["device"]
         self.whisper_type = config["whisper-type"]
 
-        self._download()
-        self.whisper_model = whisper.load_model(self.whisper_type,
-                                                self.device,
-                                                download_root=_WHISPER_ROOT)
+        self.logger = logger
+        try:
+            self.logger.write_log("interval:0:0:0:0:Model Download")
+            self._download()
+            self.logger.write_log("interval:0:0:0:0:Model Download End")
+        except:
+            self.logger.write_log("interval:0:0:0:0:Model Download Error", log_level=logging.ERROR)
+            raise ConnectionError("Model Download Error")
+        try:
+            self.logger.write_log("interval:0:0:0:0:Model Load")
+            self.whisper_model = whisper.load_model(self.whisper_type,
+                                                    self.device,
+                                                    download_root=_WHISPER_ROOT)
+            self.logger.write_log("interval:0:0:0:0:Model Load End")
+        except:
+            self.logger.write_log("interval:0:0:0:0:Model Load Error", log_level=logging.ERROR)
+            raise RuntimeError("Model Load Error")
 
     def _download(self):
         model_infos = WHISPER_MODELS[self.whisper_type]
@@ -56,17 +71,17 @@ class WhisperModel:
         return r
 
     def transcribe(
-        self,
-        audio: np.ndarray,
-        speech_array_indices: List[SPEECH_ARRAY_INDEX],
-        lang: LANG,
-        prompt: str,
+            self,
+            audio: np.ndarray,
+            speech_array_indices: List[SPEECH_ARRAY_INDEX],
+            lang: LANG,
+            prompt: str,
     ):
         res = []
         for seg in (
-            speech_array_indices
-            if len(speech_array_indices) == 1
-            else tqdm(speech_array_indices)
+                speech_array_indices
+                if len(speech_array_indices) == 1
+                else tqdm(speech_array_indices)
         ):
             r = self.whisper_model.transcribe(
                 audio[int(seg["start"]): int(seg["end"])],
@@ -100,7 +115,7 @@ class WhisperModel:
                 end = min(
                     s["end"] + origin["start"] / self.sample_rate,
                     origin["end"] / self.sample_rate,
-                )
+                    )
                 if start > end:
                     continue
                 # mark any empty segment that is not very short

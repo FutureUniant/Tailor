@@ -1,4 +1,5 @@
 import os
+import logging
 
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from transformers import pipeline
@@ -15,18 +16,30 @@ TASK2MODEL = {
 
 
 class HelsinkiModel:
-    def __init__(self, param):
+    def __init__(self, param, logger):
         self.task = param["task"]
         assert self.task in TASK2MODEL.keys(), "Please check the task!"
         self.model_path = TASK2MODEL[self.task]
-        self._download()
+        self.logger = logger
+        try:
+            self.logger.write_log("interval:0:0:0:0:Model Download")
+            self._download()
+            self.logger.write_log("interval:0:0:0:0:Model Download End")
+        except:
+            self.logger.write_log("interval:0:0:0:0:Model Download Error", log_level=logging.ERROR)
+            raise ConnectionError("Model Download Error")
+        try:
+            self.logger.write_log("interval:0:0:0:0:Model Load")
+            # 创建tokenizer
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
+            # 创建模型
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model_path)
 
-        # 创建tokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
-        # 创建模型
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model_path)
-
-        self.pipeline = pipeline("translation", model=self.model, tokenizer=self.tokenizer)
+            self.pipeline = pipeline("translation", model=self.model, tokenizer=self.tokenizer)
+            self.logger.write_log("interval:0:0:0:0:Model Load End")
+        except:
+            self.logger.write_log("interval:0:0:0:0:Model Load Error", log_level=logging.ERROR)
+            raise RuntimeError("Model Load Error")
 
     def _download(self):
         model_infos = HELSINKI_NLP_MODELS[self.task]

@@ -1,4 +1,6 @@
 import os
+import logging
+
 from app.src.algorithm.base.sadtalker.src.gradio import SadTalker
 from app.utils.paths import Paths
 
@@ -8,14 +10,20 @@ _SADTALKER_ROOT = os.path.join(Paths.ALGORITHM, "base", "sadtalker", "checkpoint
 
 
 class TailorSadTalker:
-    def __init__(self, param):
+    def __init__(self, param, logger):
         self.param = param
 
         checkpoint_path = param["checkpoint_path"]
         config_path = param["config_path"]
         device = param["device"]
-
-        self._download()
+        self.logger = logger
+        try:
+            self.logger.write_log("interval:0:0:0:0:Model Download")
+            self._download()
+            self.logger.write_log("interval:0:0:0:0:Model Download End")
+        except:
+            self.logger.write_log("interval:0:0:0:0:Model Download Error", log_level=logging.ERROR)
+            raise ConnectionError("Model Download Error")
         self.sad_talker = SadTalker(checkpoint_path, config_path, device=device)
 
     def _download(self):

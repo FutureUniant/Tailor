@@ -335,3 +335,51 @@ msgstr "Please enter a valid image path."
 
 msgid "Please enter the text you want to convert to speech."
 msgstr "Please enter the text you want to convert to speech."
+
+msgid "Model Download"
+msgstr "Model Download"
+
+msgid "Model Download End"
+msgstr "Model Download End"
+
+msgid "Model Download Error"
+msgstr "Model Download Error"
+
+msgid "Model Load"
+msgstr "Model Load"
+
+msgid "Model Load End"
+msgstr "Model Load End"
+
+msgid "Model Load Error"
+msgstr "Model Load Error"
+
+msgid "Remaining Time:"
+msgstr "Remaining Time:"
+
+msgid "s"
+msgstr "s"
+
+msgid "Erase Subtitles"
+msgstr "Erase Subtitles"
+
+msgid "Please enter the top and bottom of the subtitles:"
+msgstr "Please enter the top and bottom of the subtitles:"
+
+msgid "Current video height:"
+msgstr "Current video height:"
+
+msgid "Top:"
+msgstr "Top:"
+
+msgid "Bottom:"
+msgstr "Bottom:"
+
+msgid "Please enter an integer!"
+msgstr "Please enter an integer!"
+
+msgid "Please enter a number less than the height of the video!"
+msgstr "Please enter a number less than the height of the video!"
+
+msgid "Please enter the correct top and bottom!"
+msgstr "Please enter the correct top and bottom!"

@@ -1,14 +1,17 @@
 import os
 import math
-
-from moviepy.editor import VideoFileClip
 from PIL import Image
+
+from app.src.utils.logger import Logger
+from moviepy.editor import VideoFileClip
 from app.src.algorithm.base.modnet.modnet import MattingModel
-from app.src.utils.register import ALGORITHM
 
 
-@ALGORITHM.register(name="VIDEO_OPTIMIZE_BACKGROUND")
 def change_background(input_data):
+    timestamp = input_data["input"]["timestamp"]
+    log_path = input_data["input"]["log_path"]
+    logger = Logger(log_path, timestamp)
+
     video_path = input_data["input"]["video_path"]
     video = VideoFileClip(video_path)
     fps = video.fps
@@ -52,46 +55,13 @@ def change_background(input_data):
         image.save(temp_image_path)
         input_data["input"]["image_path"] = temp_image_path
 
-    mat_model = MattingModel(input_data["config"])
+    mat_model = MattingModel(input_data["config"], logger)
     mat_path = mat_model.matting(input_data["input"], input_data["output"])
 
+    logger.write_log(f"interval:2:2:1:0")
     output_path = input_data["output"]["output_path"]
     video = VideoFileClip(mat_path).set_audio(video.audio)
     video.write_videofile(output_path)
+    logger.write_log(f"interval:2:2:1:1")
 
     return output_path
-
-
-if __name__ == '__main__':
-    """
-    resize: 首先会按照图像大小，resize输入图像可以覆盖整个视频大小，然后再进行相应的resize、crop等操作
-        resize: 不管图像比例，直接resize视频大小
-        center: 中心裁剪图像
-        left-top: 左上角为基准点
-        left-down: 左下角为基准点
-        right-top: 右上角为基准点
-        right-down: 右下角为基准点
-        top-center: 上边中心为基准点
-        down-center: 下边中心为基准点
-        left-center: 左边中心为基准点
-        right-center: 右边中心为基准点
-    """
-
-    input_datas = {
-        "config": {
-            "device": "cuda",
-            "model-type": "webcam",
-            "resize": "center",
-        },
-        "input": {
-            "result_type": "compose",  # foreground/matte/compose
-            "video_path": r"F:\demo\抠图\测试视频.mp4",
-            "image_path": r"F:\demo\抠图\测试图.jpg"
-        },
-        "output": {
-            "video_path": r"F:\demo\抠图\mat.mp4",
-            "output_path": r"F:\demo\抠图\测试视频-matte.mp4",
-        }
-
-    }
-    change_background(input_datas)

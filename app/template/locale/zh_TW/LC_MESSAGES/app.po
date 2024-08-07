@@ -69,3 +69,5 @@ msgstr "導入"
 msgid "Export"
 msgstr "導出"
 
+msgid "Start up..."
+msgstr "正在啟動..."

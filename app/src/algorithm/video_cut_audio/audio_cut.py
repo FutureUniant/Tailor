@@ -1,6 +1,8 @@
 import srt
 from moviepy import editor
 
+from app.src.utils.logger import Logger
+
 
 # Cut media
 class Cutter:
@@ -8,11 +10,15 @@ class Cutter:
         self.input_data = input_data
         self.config     = input_data["config"]
 
+        self.timestamp = input_data["input"]["timestamp"]
+        self.log_path = input_data["input"]["log_path"]
+        self.logger = Logger(self.log_path, self.timestamp)
+
         self.encoding = self.config["encoding"]
         self.bitrate  = self.config["bitrate"]
 
     def run(self):
-
+        self.logger.write_log("interval:1:1:1:0")
         video_path = self.input_data["input"]["video_path"]
         srt_path   = self.input_data["input"]["srt_path"]
 
@@ -52,5 +58,5 @@ class Cutter:
         final_clip.write_videofile(
             video_out_path, audio_codec="aac", bitrate=self.bitrate
         )
-
+        self.logger.write_log("interval:1:1:1:1")
         media.close()

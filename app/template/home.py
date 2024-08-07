@@ -6,10 +6,9 @@ from PIL import Image
 import customtkinter
 from customtkinter import CTkLabel, CTkImage, CTkFrame, CTkButton, CTkFont, CTkOptionMenu, CTkSegmentedButton, CTkToplevel
 
-from app.tailorwidgets.default.filetypes import FILE_FILETYPES, FILE_EXTENSION
+from app.tailorwidgets.default.filetypes import FILE_FILETYPES
 
 from app.utils.paths import Paths
-from app.utils.version import Version
 
 from app.template.module.project_frame import ProjectScrollFrame
 from app.template.module.new_project_window import NewProjectWindow

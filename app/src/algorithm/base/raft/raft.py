@@ -9,10 +9,11 @@ from modelscope.utils.constant import Tasks
 
 
 class RAFT:
-    def __init__(self, param):
+    def __init__(self, param, logger):
         self.param = param
         self.model = param["checkpoint"]
         self.device = param["device"]
+        self.logger = logger
         if not torch.cuda.is_available():
             self.device = "cpu"
 
@@ -35,14 +36,20 @@ class RAFT:
             demo_service=False,
         )
 
+        self.logger.write_log("interval:0:0:0:0:Model Load")
         raft_model = pipeline(Tasks.video_frame_interpolation, model=self.model, device=self.device)
-        result = raft_model(input_dict, **kwargs)[OutputKeys.OUTPUT_VIDEO]
-        print(result)
+        self.logger.write_log("interval:0:0:0:0:Model Load End")
 
+        self.logger.write_log(f"interval:2:1:1:0")
+        result = raft_model(input_dict, **kwargs)[OutputKeys.OUTPUT_VIDEO]
+        self.logger.write_log(f"interval:2:1:1:1")
+
+        self.logger.write_log(f"interval:2:2:1:0")
         input_video = VideoFileClip(input_path)
         temp_video = VideoFileClip(temp_path)
 
         output_video = temp_video.set_audio(input_video.audio)
         output_video.write_videofile(output_path)
+        self.logger.write_log(f"interval:2:2:1:1")
 
         return output_path

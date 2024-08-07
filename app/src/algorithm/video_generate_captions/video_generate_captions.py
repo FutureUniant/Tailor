@@ -1,16 +1,16 @@
 import srt
 
+from app.src.utils.logger import Logger
 from moviepy.editor import TextClip, CompositeVideoClip
 from moviepy.video.tools.subtitles import SubtitlesClip
 from moviepy.video.io.VideoFileClip import VideoFileClip
 
 from app.src.algorithm.utils.audio import load_audio
 from app.src.algorithm.base.whisper import whisper_model
-from app.src.utils.register import ALGORITHM
 
 
-def transcribe(input_data):
-    whisper = whisper_model.WhisperModel(input_data["config"])
+def transcribe(input_data, logger):
+    whisper = whisper_model.WhisperModel(input_data["config"], logger)
 
     sampling_rate = input_data["config"]["sample_rate"]
 
@@ -18,18 +18,22 @@ def transcribe(input_data):
     srt_path = input_data["output"]["srt_path"]
     encoding = input_data["config"]["encoding"]
 
+    logger.write_log("interval:2:1:1:0")
     audio = load_audio(video_path, sr=sampling_rate)
     res = (
         whisper.transcribe(
             audio, [{"start": 0, "end": len(audio)}], input_data["config"]["lang"], input_data["config"]["prompt"]
         )
     )
+    logger.write_log("interval:2:1:1:1")
+    logger.write_log("interval:2:2:1:0")
     subs = whisper.gen_srt(res)
     with open(srt_path, "wb") as f:
         f.write(srt.compose(subs).encode(encoding, "replace"))
+    logger.write_log("interval:2:2:1:1")
 
 
-def caption(input_data):
+def caption(input_data, logger):
 
     font_style = input_data["config"]["font-style"]
     font_size = input_data["config"]["font-size"]
@@ -41,7 +45,7 @@ def caption(input_data):
 
     video_path = input_data["input"]["video_path"]
     srt_path = input_data["input"]["srt_path"]
-
+    logger.write_log("interval:1:1:1:0")
     video = VideoFileClip(video_path)
     if position == "bottom":
         vw, vh = video.size
@@ -58,66 +62,18 @@ def caption(input_data):
 
     video_with_subtitles = CompositeVideoClip([video, subtitles])
     video_with_subtitles.write_videofile(input_data["output"]["video_path"], fps=video.fps)
+    logger.write_log("interval:1:1:1:1")
 
 
-@ALGORITHM.register(name="VIDEO_GENERATE_CAPTIONS")
 def video_generate_captions(input_data):
     opt_type = input_data["type"]
+    timestamp = input_data["input"]["timestamp"]
+    log_path = input_data["input"]["log_path"]
+    logger = Logger(log_path, timestamp)
     if opt_type == "transcribe":
-        transcribe(input_data)
+        transcribe(input_data, logger)
     elif opt_type == "caption":
-        caption(input_data)
+        caption(input_data, logger)
     else:
         raise Exception(f"VIDEO_GENERATE_CAPTIONS only has two kinds of operations "
                         f"named transcribe and caption, but got {opt_type}")
-
-
-
-if __name__ == '__main__':
-    import os
-    ffmpeg_bin_path = r"F:\project\tailor\extensions\ffmpeg-6.1.1-essentials_build\bin"
-
-    os.environ['PATH'] += (os.pathsep + ffmpeg_bin_path)
-
-    input_data = {
-        "config": {
-            "lang": "zh",
-            "prompt": "",
-            "whisper-type": "base",
-            "device": "cuda",
-            "sample_rate": 16000,
-            "encoding": "utf-8",
-        },
-        "type": "transcribe",
-        "input": {
-            "video_path": r"F:\demo\caption\cap.mp4"
-        },
-        "output": {
-            "srt_path": r"F:\demo\caption\cap.srt",
-        }
-
-    }
-    video_generate_captions(input_data)
-    print("transcribe End!!!!!")
-    input_data = {
-        "config": {
-            "encoding": "utf-8",
-            # "encoding": "gbk",
-            "font-style": r"./fonts/cat_eat_black.ttf",
-            "font-size": 60,
-            "font-color": "white",
-            "stroke_color": "black",
-            "stroke_width": 2,
-        },
-        "type": "caption",
-        "input": {
-            "video_path": r"F:\demo\caption\cap.mp4",
-            "srt_path": r"F:\demo\caption\cap.srt",
-        },
-        "output": {
-            "video_path": r"F:\demo\caption\cap_res.mp4",
-        }
-
-    }
-    video_generate_captions(input_data)
-    print("caption End!!!!!")

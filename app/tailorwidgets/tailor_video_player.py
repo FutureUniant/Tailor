@@ -5,17 +5,15 @@ import inspect
 from typing import Union, Tuple
 from threading import Thread, Lock
 
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageDraw
 
 import tkinter as tk
 from customtkinter import CTk
-from customtkinter import CTkFrame, CTkImage, CTkButton, ThemeManager
+from customtkinter import CTkFrame, CTkImage, CTkButton
 
 import pyaudio
-from moviepy.editor import VideoFileClip, ImageClip
+from moviepy.editor import VideoFileClip
 
-import customtkinter
-customtkinter.set_appearance_mode("light")
 
 
 def _async_raise(tid, exctype):
@@ -73,6 +71,8 @@ class TLRVideoPlayer(CTkFrame):
         self._video_condition = Lock()
         self._audio_condition = Lock()
 
+        self.current_image = None
+
         self.lock = Lock()
 
         self._is_playing = False
@@ -80,28 +80,35 @@ class TLRVideoPlayer(CTkFrame):
         self._start_time = 0.0
         self._now_time = 0.0
 
+        self.ratio = -1
+
     def initial_video(self):
         self.set_size()
         if self._video is not None:
             video_w = self._video.w
             video_h = self._video.h
             # 保持原视频的纵横比
-            ratio = min(self._video_width / video_w, self._video_height / video_h)
-            resize_w = int(video_w * ratio)
-            resize_h = int(video_h * ratio)
+            self.ratio = min(self._video_width / video_w, self._video_height / video_h)
+            resize_w = int(video_w * self.ratio)
+            resize_h = int(video_h * self.ratio)
             t_start = self._process_start_time()
             image_clip = self._video.get_frame(t_start)
             frame = Image.fromarray(image_clip).resize((resize_w, resize_h))
+
+            self.current_image = frame
+
             frame = ImageTk.PhotoImage(frame)
             self._video_frame['image'] = frame
             self._video_frame.image = frame
             self._video_frame.update()
         else:
             blank_image = Image.new("RGB", (self._video_width, self._video_height), (43, 43, 43))
+            self.current_image = blank_image
             frame = ImageTk.PhotoImage(blank_image)
             self._video_frame['image'] = frame
             self._video_frame.image = frame
             self._video_frame.update()
+            self.ratio = -1
 
     def play(self):
         self.set_video_path()
@@ -145,6 +152,7 @@ class TLRVideoPlayer(CTkFrame):
                 skip = (skip + 1) % 2
                 continue
             frame = Image.fromarray(frame).resize((resize_w, resize_h))
+            self.current_image = frame
             with self.lock:
                 if not self._is_playing:
                     break_time = t
@@ -193,7 +201,7 @@ class TLRVideoPlayer(CTkFrame):
                         channels=2,
                         rate=44100,
                         output=True)
-        
+
         clip_audio = self._audio.subclip(t_start=self._process_start_time())
         # 逐帧播放音频
         self._audio_condition.acquire()
@@ -280,6 +288,17 @@ class TLRVideoPlayer(CTkFrame):
             t_start = self.get_duration() - 1 / fps
         return t_start
 
+    def draw_line(self, line, fill="green", width=5):
+        self.pause()
+        draw_image = self.current_image.copy()
+        draw = ImageDraw.Draw(draw_image)
+        points = tuple(line.reshape((-1, )).tolist())
+        draw.line(points, fill=fill, width=width)
+        frame = ImageTk.PhotoImage(draw_image)
+        self._video_frame['image'] = frame
+        self._video_frame.image = frame
+        self._video_frame.update()
+
     def player_close(self):
         if self._video_thread and self._video_thread.is_alive():
             stop_thread(self._video_thread)
@@ -291,64 +310,3 @@ class TLRVideoPlayer(CTkFrame):
         if self._audio is not None:
             self._audio.close()
             self._audio = None
-
-
-
-
-class App(CTk):
-    def __init__(self):
-        super().__init__()
-        self.geometry('1020x600')
-        self.configure(bg="red")
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.player = TLRVideoPlayer(self,
-                                  video_path=r"E:\project\Tailor\视频\test1.mp4"
-                               )
-        self.player.grid(row=0, column=0, sticky="nswe")
-
-
-
-        self._play_size = (20, 20)
-        self._play_to_left_image  = CTkImage(light_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "play_to_left_light.png")),
-                                             dark_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "play_to_left_dark.png")),
-                                             size=self._play_size)
-        self._backward_image      = CTkImage(light_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "backward_light.png")),
-                                             dark_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "backward_dark.png")),
-                                             size=self._play_size)
-        self._play_image          = CTkImage(light_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "play_light.png")),
-                                             dark_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "play_dark.png")),
-                                             size=self._play_size)
-        self._pause_image         = CTkImage(light_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "pause_light.png")),
-                                             dark_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "pause_dark.png")),
-                                             size=self._play_size)
-        self._forward_image       = CTkImage(light_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "forward_light.png")),
-                                             dark_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "forward_dark.png")),
-                                            size=self._play_size)
-        self._play_to_right_image = CTkImage(light_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "play_to_right_light.png")),
-                                             dark_image=Image.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "play_to_right_dark.png")),
-                                             size=self._play_size)
-
-
-        self._play_to_left_btn = CTkButton(self, 20, 20, corner_radius=0, text="", image=self._play_to_left_image, command=self._play_to_left_event)
-        self._play_to_left_btn.grid(row=1, column=0, padx=5)
-        self._backward_btn = CTkButton(self, 20, 20, corner_radius=0, text="", image=self._backward_image, command=self._backward_event)
-        self._backward_btn.grid(row=1, column=1, padx=5)
-        self._play_btn = CTkButton(self, 20, 20, corner_radius=0, text="", image=self._play_image, command=self._play_event)
-        self._play_btn.grid(row=1, column=2, padx=5)
-        self._pause_btn = CTkButton(self, 20, 20, corner_radius=0, text="", image=self._pause_image, command=self._pause_event)
-        self._pause_btn.grid(row=1, column=3, padx=5)
-
-    def _backward_event(self):
-        self.player.play_duration(3.0)
-
-    def _play_event(self):
-        self.player.play()
-
-    def _pause_event(self):
-        self.player.pause()
-
-
-if __name__ == '__main__':
-    app = App()
-    app.mainloop()

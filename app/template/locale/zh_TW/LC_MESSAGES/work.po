@@ -335,3 +335,51 @@ msgstr "請輸入一個有效的圖像地址。"
 
 msgid "Please enter the text you want to convert to speech."
 msgstr "請輸入要轉換為語音的文本。"
+
+msgid "Model Download"
+msgstr "模型下載"
+
+msgid "Model Download End"
+msgstr "模型下載結束"
+
+msgid "Model Download Error"
+msgstr "模型下載出現錯誤"
+
+msgid "Model Load"
+msgstr "模型加載"
+
+msgid "Model Load End"
+msgstr "模型加載結束"
+
+msgid "Model Load Error"
+msgstr "模型加載出現錯誤"
+
+msgid "Remaining Time:"
+msgstr "剩餘時間："
+
+msgid "s"
+msgstr "秒"
+
+msgid "Erase Subtitles"
+msgstr "消除字幕"
+
+msgid "Please enter the top and bottom of the subtitles:"
+msgstr "請輸入字幕的頂部和底部："
+
+msgid "Current video height:"
+msgstr "當前視頻的高："
+
+msgid "Top:"
+msgstr "頂部："
+
+msgid "Bottom:"
+msgstr "底部:"
+
+msgid "Please enter an integer!"
+msgstr "請輸入整數！"
+
+msgid "Please enter a number less than the height of the video!"
+msgstr "請輸入一個小於視頻高度的整數！"
+
+msgid "Please enter the correct top and bottom!"
+msgstr "請輸入正確的頂部和底部！"

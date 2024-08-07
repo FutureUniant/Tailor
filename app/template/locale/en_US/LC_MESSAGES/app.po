@@ -69,3 +69,6 @@ msgstr "Import"
 msgid "Export"
 msgstr "Export"
 
+msgid "Start up..."
+msgstr "Start up..."
+

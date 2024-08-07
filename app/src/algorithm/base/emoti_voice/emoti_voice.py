@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import logging
 from app.src.algorithm.base.emoti_voice.config.config import Config
 from app.src.algorithm.base.emoti_voice.models.prompt_tts_modified.jets import JETSGenerator
 from app.src.algorithm.base.emoti_voice.models.prompt_tts_modified.simbert import StyleEncoder
@@ -70,7 +70,7 @@ def gen_text_for_ev(text_path, temp_path, **kwargs):
 
 
 class EmotiVoice:
-    def __init__(self, param):
+    def __init__(self, param, logger):
         self.param = param
         self.device = self.param["device"]
         if not torch.cuda.is_available():
@@ -92,7 +92,15 @@ class EmotiVoice:
         self.style_encoder_ckpt_path = os.path.join(self.config.checkpoint, "style_encoder", style_encoder_ckpt_path)
         self.generator_ckpt_path     = os.path.join(self.config.checkpoint, "generator", generator_ckpt_path)
         self.bert_path               = os.path.join(self.config.checkpoint, bert_path)
-        self._download()
+
+        self.logger = logger
+        try:
+            self.logger.write_log("interval:0:0:0:0:Model Download")
+            self._download()
+            self.logger.write_log("interval:0:0:0:0:Model Download End")
+        except:
+            self.logger.write_log("interval:0:0:0:0:Model Download Error", log_level=logging.ERROR)
+            raise ConnectionError("Model Download Error")
 
     def _download(self):
         model_infos = EMOTIVOICE_MODELS[self.param["model-type"]]

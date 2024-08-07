@@ -12,30 +12,35 @@ from app.src.algorithm.base.helsinki_nlp.helsinki_nlp import HelsinkiModel
 from app.src.algorithm.base.emoti_voice.emoti_voice import EmotiVoice
 
 from app.src.algorithm.utils.audio import load_audio, set_audio_duration
-from app.src.utils.register import ALGORITHM
+
+from app.src.utils.logger import Logger
 
 
-def transcribe(input_data):
-    whisper = WhisperModel(input_data["config"])
+def transcribe(input_data, logger):
+
+    whisper = WhisperModel(input_data["config"], logger)
 
     sampling_rate = input_data["config"]["sample_rate"]
 
     video_path = input_data["input"]["video_path"]
     srt_path = input_data["output"]["srt_path"]
     encoding = input_data["config"]["encoding"]
-
+    logger.write_log("interval:2:1:1:0")
     audio = load_audio(video_path, sr=sampling_rate)
     res = (
         whisper.transcribe(
             audio, [{"start": 0, "end": len(audio)}], input_data["config"]["lang"], input_data["config"]["prompt"]
         )
     )
+    logger.write_log("interval:2:1:1:1")
+    logger.write_log("interval:2:2:1:0")
     subs = whisper.gen_srt(res)
     with open(srt_path, "wb") as f:
         f.write(srt.compose(subs).encode(encoding, "replace"))
+    logger.write_log("interval:2:2:1:1")
 
 
-def language(input_data):
+def language(input_data, logger):
     encoding = input_data["config"]["encoding"]
     gap = input_data["config"]["gap"]
     max_speed = input_data["config"]["max_speed"]
@@ -52,7 +57,9 @@ def language(input_data):
 
     os.makedirs(audio_path, exist_ok=True)
 
-    translation = HelsinkiModel(input_data["config"])
+    translation = HelsinkiModel(input_data["config"], logger)
+
+    logger.write_log("interval:3:1:1:0")
     with open(srt_path, encoding=encoding) as f:
         subs = list(srt.parse(f.read()))
 
@@ -63,11 +70,12 @@ def language(input_data):
             trans_content = translation.translate(content)[0]['translation_text']
             sub.content = trans_content
             f.write(f"{trans_content} ")
-
+    logger.write_log("interval:3:1:1:1")
     # with open(temp_srt_path, "wb") as f:
     #     f.write(srt.compose(subs).encode(encoding, "replace"))
 
-    tts_model = EmotiVoice(input_data["config"])
+    logger.write_log("interval:3:2:1:0")
+    tts_model = EmotiVoice(input_data["config"], logger)
     tts_input = {
         "text_path": temp_text_path,
         "temp_path": temp_tts_path,
@@ -85,7 +93,9 @@ def language(input_data):
         # audio_i = set_audio_duration(audio_i, audio_i_dur, gap=gap)
         audios.append(audio_i)
     trans_audio = concatenate_audioclips(audios)
+    logger.write_log("interval:3:2:1:1")
 
+    logger.write_log("interval:3:3:1:0")
     video = VideoFileClip(video_path)
     video_duration = video.duration
     audio_duration = trans_audio.duration
@@ -105,77 +115,18 @@ def language(input_data):
 
     video = video.set_audio(trans_audio)
     video.write_videofile(output_path)
+    logger.write_log("interval:3:3:1:1")
 
 
-@ALGORITHM.register(name="VIDEO_GENERATE_LANGUAGE")
 def video_language_change(input_data):
     opt_type = input_data["type"]
+    timestamp = input_data["input"]["timestamp"]
+    log_path = input_data["input"]["log_path"]
+    logger = Logger(log_path, timestamp)
     if opt_type == "transcribe":
-        transcribe(input_data)
+        transcribe(input_data, logger)
     elif opt_type == "language":
-        language(input_data)
+        language(input_data, logger)
     else:
         raise Exception(f"VIDEO_LANGUAGE_CHANGE only has two kinds of operations "
                         f"named transcribe and language, but got {opt_type}")
-
-
-if __name__ == '__main__':
-    import os
-    ffmpeg_bin_path = r"F:\project\tailor\extensions\ffmpeg-6.1.1-essentials_build\bin"
-
-    os.environ['PATH'] += (os.pathsep + ffmpeg_bin_path)
-
-    input_data = {
-        "config": {
-            "lang": "zh",
-            "prompt": "",
-            "whisper-type": "base",
-            "device": "cuda",
-            "sample_rate": 16000,
-            "encoding": "utf-8",
-        },
-        "type": "transcribe",
-        "input": {
-            "video_path": r"F:\demo\language\中文.mp4"
-        },
-        "output": {
-            "srt_path": r"F:\demo\language\中文.srt",
-        }
-
-    }
-    video_language_change(input_data)
-    print("transcribe End!!!!!")
-    input_data = {
-        "config": {
-            # HelsinkiModel
-            "task": "opus-mt-zh-en",
-            # EmotiVoice
-            "device": "cuda",
-            "model-type": "emotivoice_v1",
-            "generator_ckpt_path": "g_00140000",
-            "style_encoder_ckpt_path": "checkpoint_163431",
-            "bert_path": "simbert-base-chinese",
-            "speaker": 9000,
-            "prompt": "语速很慢",
-            "gap": 1.0,
-            "max_speed": 1.2,
-
-            "encoding": "utf-8",
-            # "encoding": "gbk",
-        },
-        "type": "language",
-        "input": {
-            "video_path": r"F:\demo\language\中文.mp4",
-            "srt_path": r"F:\demo\language\中文.srt",
-        },
-        "output": {
-            # "temp_srt_path": r"F:\demo\language\英文.srt",
-            "temp_text_path": r"F:\demo\language\英文.txt",
-            "temp_tts_path": r"F:\demo\language\英文_tts.txt",
-            "audio_path": r"F:\demo\language\英文",
-            "video_path": r"F:\demo\language\英文.mp4",
-        }
-
-    }
-    video_language_change(input_data)
-    print("language End!!!!!")

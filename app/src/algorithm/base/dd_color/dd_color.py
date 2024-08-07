@@ -12,10 +12,11 @@ from moviepy.editor import VideoFileClip, ImageSequenceClip
 
 
 class DDColor:
-    def __init__(self, param):
+    def __init__(self, param, logger):
         self.param = param
         self.model = param["model"]
         self.device = param["device"]
+        self.logger = logger
         if not torch.cuda.is_available():
             self.device = "cpu"
 
@@ -27,25 +28,33 @@ class DDColor:
 
         output_path = output_data["video_path"]
 
+        self.logger.write_log("interval:0:0:0:0:Model Load")
         ddcolor_model = pipeline(Tasks.image_colorization, model=self.model, device=self.device)
+        self.logger.write_log("interval:0:0:0:0:Model Load End")
 
         temp_image_dir = os.path.join(temp_path, "images")
         os.makedirs(temp_image_dir, exist_ok=True)
 
         input_video = VideoFileClip(input_path)
         fps = input_video.fps
+        nframes = int(input_video.duration * fps)
 
+        self.logger.write_log(f"follow:2:1:{nframes}:0")
         image_paths = list()
         for i, frame in enumerate(tqdm(input_video.iter_frames())):
             result = ddcolor_model(frame)
             temp_image_path = os.path.join(temp_image_dir, f"image_{i}.png")
             Image.fromarray(result[OutputKeys.OUTPUT_IMG][:, :, ::-1]).save(temp_image_path)
             image_paths.append(temp_image_path)
+            self.logger.write_log(f"follow:2:1:{nframes}:{i + 1}")
+        self.logger.write_log(f"follow:2:1:{nframes}:{nframes}")
+        self.logger.write_log(f"interval:2:2:1:0")
         output_video = ImageSequenceClip(image_paths, fps=fps)
 
         output_video = output_video.set_audio(input_video.audio)
         output_video.write_videofile(output_path)
         shutil.rmtree(temp_path)
+        self.logger.write_log(f"interval:2:2:1:1")
         return output_path
 
 

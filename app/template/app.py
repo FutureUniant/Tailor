@@ -3,21 +3,26 @@ import shutil
 import torch
 
 import customtkinter
-from app.template.home import HomeWindow
-from app.template.work import WorkWindow
 
 from app.utils.paths import Paths
 from app.utils.convert import Dict2Class
 from app.utils.version import Version
 from app.utils.function import Function
 
+
+from app.config.config import Config
 from app.config.app_image import APPIMAGE
+
 
 from app.src.model.custom import Custom
 from app.src.controller.custom_ctrl import CustomController
 from app.src.project import ProjectUtils
+
+
 from app.template import get_window_name
 from app.template import TailorTranslate
+
+from app.tailorwidgets.tailor_open_modal import TLROpenModal
 
 WINDOW_NAME = get_window_name(__file__)
 
@@ -64,14 +69,22 @@ class App(customtkinter.CTk, TailorTranslate):
 
         self.iconbitmap(bitmap=os.path.join(Paths.STATIC, self.app_images.ICON_ICO_256))
         self.title("Tailor")
-
-        # self.iconify()
         self.withdraw()
 
+        self.open_modal = TLROpenModal(text=self.translate("Start up..."),
+                                       fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK))
+        self.after(1000, self.asyn_load)
+
+
+    def asyn_load(self):
+        from app.template.home import HomeWindow
+        from app.template.work import WorkWindow
         self.work = WorkWindow(self)
         self.work.withdraw()
         self.home = HomeWindow(self)
         self.home.withdraw()
+
+        self.open_modal.destroy()
 
         if ProjectUtils.is_tailor_file(self.tailor_path):
             self.work.deiconify()

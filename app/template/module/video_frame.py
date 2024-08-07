@@ -1,14 +1,9 @@
 import math
-import warnings
-from typing import Union, Tuple, Callable, Optional, List
+from typing import Union, Tuple
 
-from tkinter import ttk
 import customtkinter
-from customtkinter.windows.widgets.core_widget_classes import CTkBaseClass
 from customtkinter.windows.widgets.font import CTkFont
-from customtkinter import ThemeManager
-from customtkinter import windows
-from customtkinter import CTkFrame, CTkImage, CTkButton, ThemeManager
+from customtkinter import CTkFrame
 
 from app.tailorwidgets.tailor_video_player import TLRVideoPlayer
 from app.tailorwidgets.tailor_single_timeline import TLRSingleTimeline
@@ -143,6 +138,15 @@ class TLRVideoFrame(CTkFrame):
     def _on_resize(self, event):
         playhead_value = self._player._start_time
         self._timeline.on_resize(event, playhead_value=playhead_value)
+
+    def get_ratio(self):
+        return self._player.ratio
+
+    def get_current_image(self):
+        return self._player.current_image
+
+    def draw_line(self, line, fill="green", width=5):
+        return self._player.draw_line(line, fill=fill, width=width)
 
     def close(self):
         self._player.player_close()

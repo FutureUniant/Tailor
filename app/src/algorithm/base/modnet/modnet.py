@@ -1,5 +1,6 @@
 import os
 import cv2
+import logging
 import numpy as np
 from PIL import Image
 from tqdm import tqdm
@@ -25,21 +26,35 @@ torch_transforms = transforms.Compose(
 
 
 class MattingModel:
-    def __init__(self, param):
+    def __init__(self, param, logger):
         self.param = param
         self.modnet = MODNet(backbone_pretrained=False)
-        self._download()
 
-        self.modnet = nn.DataParallel(self.modnet)
+        self.logger = logger
+        try:
+            self.logger.write_log("interval:0:0:0:0:Model Download")
+            self._download()
+            self.logger.write_log("interval:0:0:0:0:Model Download End")
+        except:
+            self.logger.write_log("interval:0:0:0:0:Model Download Error", log_level=logging.ERROR)
+            raise ConnectionError("Model Download Error")
 
-        self.GPU = True if torch.cuda.device_count() > 0 else False
-        if self.GPU:
-            print('Use GPU...')
-            self.modnet = self.modnet.cuda()
-            self.modnet.load_state_dict(torch.load(self.pretrained_ckpt))
-        else:
-            print('Use CPU...')
-            self.modnet.load_state_dict(torch.load(self.pretrained_ckpt, map_location=torch.device('cpu')))
+        try:
+            self.logger.write_log("interval:0:0:0:0:Model Load")
+            self.modnet = nn.DataParallel(self.modnet)
+
+            self.GPU = True if torch.cuda.device_count() > 0 else False
+            if self.GPU:
+                print('Use GPU...')
+                self.modnet = self.modnet.cuda()
+                self.modnet.load_state_dict(torch.load(self.pretrained_ckpt))
+            else:
+                print('Use CPU...')
+                self.modnet.load_state_dict(torch.load(self.pretrained_ckpt, map_location=torch.device('cpu')))
+            self.logger.write_log("interval:0:0:0:0:Model Load End")
+        except:
+            self.logger.write_log("interval:0:0:0:0:Model Load Error", log_level=logging.ERROR)
+            raise RuntimeError("Model Load Error")
 
     def _download(self):
         model_infos = MODNET_MODELS[self.param["model-type"]]
@@ -70,7 +85,7 @@ class MattingModel:
             print('Failed to read the video: {0}'.format(video))
             exit()
 
-        num_frame = vc.get(cv2.CAP_PROP_FRAME_COUNT)
+        num_frame = int(vc.get(cv2.CAP_PROP_FRAME_COUNT))
         h, w = frame.shape[:2]
         if w >= h:
             rh = 512
@@ -91,8 +106,9 @@ class MattingModel:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         video_writer = cv2.VideoWriter(result, fourcc, fps, (w, h))
 
+        self.logger.write_log(f"follow:2:1:{num_frame}:0")
         print('Start matting...')
-        with tqdm(range(int(num_frame))) as t:
+        with tqdm(range(num_frame)) as t:
             for c in t:
                 frame_np = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 frame_np = cv2.resize(frame_np, (rw, rh), cv2.INTER_AREA)
@@ -120,6 +136,7 @@ class MattingModel:
 
                 rval, frame = vc.read()
                 c += 1
+                self.logger.write_log(f"follow:2:1:{num_frame}:{c}")
 
         video_writer.release()
         print('Save the result video to {0}'.format(result))

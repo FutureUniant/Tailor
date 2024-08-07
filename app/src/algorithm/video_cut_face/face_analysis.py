@@ -1,13 +1,15 @@
+import os
+import torch
+import cv2
 import copy
 import json
 import shutil
-
-from app.src.algorithm.base.face_net.face_model import TailorMTCNN, TailorInceptionResnetV1
-import os
 import numpy as np
-import torch
-import cv2
-from PIL import Image, ImageDraw
+from PIL import Image
+
+
+from app.src.utils.logger import Logger
+from app.src.algorithm.base.face_net.face_model import TailorMTCNN, TailorInceptionResnetV1
 
 
 class FaceAnalysis:
@@ -39,20 +41,33 @@ class FaceAnalysis:
         self.pretrained = self.config["checkpoint"]
 
         faces_folder = self.input_data["output"]["faces_folder"]
-        if os.path.exists(faces_folder):
-            shutil.rmtree(faces_folder)
         os.makedirs(faces_folder, exist_ok=True)
+
+        self.timestamp = input_data["input"]["timestamp"]
+        self.log_path = input_data["input"]["log_path"]
+        self.logger = Logger(self.log_path, self.timestamp)
 
     def run(self):
 
+        self.logger.write_log("interval:5:1:1:0")
         frames, timestamps, size = self.get_frames()
+        self.logger.write_log("interval:5:1:1:1")
+
+        self.logger.write_log("interval:5:2:1:0")
         faces, faces_ts, faces_box = self.get_faces(frames, timestamps, size)
+        self.logger.write_log("interval:5:2:1:1")
 
+        self.logger.write_log("interval:5:3:1:0")
         unique_face_infos = self.recognized_face(faces)
+        self.logger.write_log("interval:5:3:1:1")
 
+        self.logger.write_log("interval:5:4:1:0")
         unique_face_infos = self.extract_faces(unique_face_infos, faces_ts, faces_box, frames, timestamps, size)
+        self.logger.write_log("interval:5:4:1:1")
 
+        self.logger.write_log("interval:5:5:1:0")
         self.extract_segments(unique_face_infos, faces_ts, timestamps)
+        self.logger.write_log("interval:5:5:1:1")
 
     def get_frames(self):
         # TODO: For fast computation, only one frame of image per second is obtained for face detection here.

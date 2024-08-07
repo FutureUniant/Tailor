@@ -18,6 +18,9 @@ class Config:
     MODAL_DARK  = "gray50"
     MODAL_LIGHT = "gray50"
 
+    ICON_PINK_RGB = (238, 154, 229)
+    ICON_BLUE_RGB = (89, 97, 249)
+
     # Default Config about Project
     IMPORT_VIDEO_NAME = "origin"
     OUTPUT_VIDEO_NAME = "last_video"

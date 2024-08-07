@@ -86,6 +86,9 @@ Tailor uses advanced techniques to effectively improve the smoothness of the vid
 ##### VIDEO_OPTIMIZE_RESOLUTION
 For videos with lower clarity, Tailor can improve the clarity. Say goodbye to "mosaic" and make your video picture clearer and sharper, and the details are undoubtedly revealed.
 
+##### VIDEO_OPTIMIZE_ERASE_SUBTITLES
+Eliminate the subtitles in the video. Whether it's a self-made video that you want to re-edit, or you want to obtain a pure screen without subtitles, this function can easily handle it. For example, when processing movie clips or teaching videos, it will bring you a brand-new experience.  
+
 <a id="installation"></a>
 # Installation and Running
 Tailor offers two usage modes: User Mode and Developer Mode.  
@@ -153,7 +156,12 @@ Video Processing
 1. Support voice driven broadcast generate function;  
 2. Added a model checking mechanism to avoid model damage caused by network issues that require manual repair;  
 3. Fix interface switching bug;  
-4. Fix bugs in video multi process processing.  
+4. Fix bugs in video multi process processing. 
+* 2024/08/07: 
+1. Add the `Erase Subtitles` function;
+2. Add a progress bar for function processing;
+3. Interface prompt for Tailor startup;
+4. The problem that the mask was at the top of the screen has been solved.
 
 <a id="business"></a>
 # Business

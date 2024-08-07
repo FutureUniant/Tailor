@@ -1,10 +1,7 @@
 import json
-import logging
-import os
-import re
-
-import srt
 from moviepy import editor
+
+from app.src.utils.logger import Logger
 
 
 # Cut media
@@ -16,8 +13,12 @@ class Cutter:
         self.encoding = self.config["encoding"]
         self.bitrate  = self.config["bitrate"]
 
-    def run(self):
+        self.timestamp = input_data["input"]["timestamp"]
+        self.log_path = input_data["input"]["log_path"]
+        self.logger = Logger(self.log_path, self.timestamp)
 
+    def run(self):
+        self.logger.write_log("interval:1:1:1:0")
         video_path = self.input_data["input"]["video_path"]
         json_path  = self.input_data["input"]["json_path"]
         cut_faces  = self.input_data["input"]["cut_faces"]
@@ -52,6 +53,7 @@ class Cutter:
         )
 
         media.close()
+        self.logger.write_log("interval:1:1:1:1")
 
     def merge_segments(self, segments):
         segments = sorted(segments, key=lambda x: x[0])
