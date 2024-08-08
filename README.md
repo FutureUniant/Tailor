@@ -101,9 +101,13 @@ Tailor提供了2种使用方式，分别是使用者模式和开发者模式。
 ## 使用者模式
 该方式使用非常简单，直接[下载Tailor发布版](https://github.com/FutureUniant/Tailor/releases)，双击安装`tailor.exe`，即可使用。  
 注意：目前只支持Windows用户使用。  
-百度链接：  
-链接：https://pan.baidu.com/s/1GVUuHxidImF-Cvz_W7_fjQ 
-提取码：bhhh
+### 百度链接：  
+链接：https://pan.baidu.com/s/13RSdQE5DUfZp692JgDr7uA?pwd=lbbh   
+提取码：lbbh
+
+### 123网盘：
+链接：https://www.123pan.com/s/TvpgTd-rDnYd.html  
+提取码：9vLB
 
 ## 开发者模式
 ### 前提条件
