@@ -89,9 +89,18 @@ For videos with lower clarity, Tailor can improve the clarity. Say goodbye to "m
 ##### VIDEO_OPTIMIZE_ERASE_SUBTITLES
 Eliminate the subtitles in the video. Whether it's a self-made video that you want to re-edit, or you want to obtain a pure screen without subtitles, this function can easily handle it. For example, when processing movie clips or teaching videos, it will bring you a brand-new experience.  
 
-##### VIDEO_OPTIMIZE_ERASE_TARGET
+<video controls>
+   <source src="assets/erase_subtitles.mp4" type="video/mp4">
+   ERASE SUBTITLES
+</video>
+
+##### VIDEO_OPTIMIZE_REMOVE_TARGET
 Eliminate the desired target in the video. With just a light click of the mouse, Tailor can automatically track and eliminate the target in the video. Whether it's unwanted passersby, clutter, or blemishes, they can all be easily removed. No complex operations are required. The intelligent algorithm responds quickly, making your video instantly clean and tidy.  
 
+<video controls>
+   <source src="assets/remove_target.mp4" type="video/mp4">
+   REMOVE TARGET
+</video>
 
 <a id="installation"></a>
 # Installation and Running
