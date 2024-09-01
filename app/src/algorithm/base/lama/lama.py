@@ -17,20 +17,23 @@ class LaMa:
         self.logger = logger
 
         os.environ['MODELSCOPE_CACHE'] = os.path.join(os.path.dirname(__file__), "checkpoint")
-        self.logger.write_log("interval:0:0:0:0:Model Load")
-        # self.inpainting = pipeline(Tasks.image_inpainting, model='damo/cv_fft_inpainting_lama')
-        self.inpainting = pipeline(Tasks.image_inpainting, model=self.model)
-        self.logger.write_log("interval:0:0:0:0:Model Load End")
-
         if not torch.cuda.is_available():
             self.device = "cpu"
+        self.logger.write_log("interval:0:0:0:0:Model Load")
+        # self.inpainting = pipeline(Tasks.image_inpainting, model='damo/cv_fft_inpainting_lama')
+        self.inpainting = pipeline(Tasks.image_inpainting, model=self.model, device=self.device)
+        self.logger.write_log("interval:0:0:0:0:Model Load End")
 
     def infer(self, frame_info):
         frame = frame_info["image"]
         mask = frame_info["mask"]
+        if isinstance(frame, np.ndarray):
+            frame = Image.fromarray(frame)
+        if isinstance(mask, np.ndarray):
+            mask = Image.fromarray(np.uint8(mask))
         input = {
-            'img': Image.fromarray(frame),
-            'mask': Image.fromarray(np.uint8(mask)),
+            'img': frame,
+            'mask': mask,
         }
 
         result = self.inpainting(input)

@@ -1,12 +1,16 @@
 import os
 import copy
-import numpy as np
+import shutil
+
+from tqdm import tqdm
+from PIL import Image
 
 from moviepy.editor import VideoFileClip
-from customtkinter import CTkButton, CTkLabel, CTkFrame, CTkEntry, CTkScrollableFrame
+from customtkinter import CTkButton, CTkScrollableFrame
 
 from app.tailorwidgets.tailor_modal import TLRModal
 from app.tailorwidgets.tailor_message_box import TLRMessageBox
+from app.tailorwidgets.tailor_line_dialog import TLRLineDialog
 from app.tailorwidgets.default.filetypes import VIDEO_EXTENSION
 
 from app.utils.paths import Paths
@@ -28,13 +32,17 @@ def alg_video_optimize_erase_subtitles(work):
                                     message=work.translate("Please import the video file you want to process first."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     timestamp = Timer.get_timestamp()
     operation_file = os.path.join(work.app.project_path, "files", timestamp)
     os.makedirs(operation_file, exist_ok=True)
     log_path = os.path.join(operation_file, f"{timestamp}.log")
+    operation_temp_file = os.path.join(operation_file, "temp")
+    os.makedirs(operation_temp_file, exist_ok=True)
+    show_temp_file = os.path.join(operation_file, "show_temp")
+    os.makedirs(show_temp_file, exist_ok=True)
 
     video_name = f"{Config.OUTPUT_VIDEO_NAME}{os.path.splitext(work.video.path)[1]}"
     pre_last_video_name = f"pre_{Config.OUTPUT_VIDEO_NAME}{os.path.splitext(work.video.path)[1]}"
@@ -51,12 +59,6 @@ def alg_video_optimize_erase_subtitles(work):
     work._right_frame.grid_columnconfigure(0, weight=10)
     work._right_frame.grid_columnconfigure(1, weight=1)
 
-    # Current height
-    video = VideoFileClip(work.video.path)
-    vw, vh = video.size
-    ratio = work._video_frame.get_ratio()
-    video.close()
-
     right_scroll = CTkScrollableFrame(work._right_frame,
                                       fg_color=work._apply_appearance_mode(work._fg_color),
                                       bg_color=work._border_color,
@@ -64,125 +66,133 @@ def alg_video_optimize_erase_subtitles(work):
     right_scroll._scrollbar.configure(width=0)
     right_scroll.grid_columnconfigure(0, weight=1)
     right_scroll.grid(row=0, column=0, padx=5, pady=(10, 0), sticky="nsew")
-
-    current_height_label = CTkLabel(master=right_scroll,
-                                     fg_color="transparent",
-                                     text=f'{work.translate("Current video height:")} {vh}')
-    current_height_label.grid(row=0, column=0, pady=(5, 0), sticky="new")
-
-    loc_label = CTkLabel(master=right_scroll,
-                          fg_color="transparent",
-                          text=work.translate("Please enter the top and bottom of the subtitles:"))
-    loc_label.grid(row=1, column=0, pady=(10, 0), sticky="w")
-
-    loc_frame = CTkFrame(master=right_scroll)
-    top_label = CTkLabel(master=loc_frame,
-                           fg_color="transparent",
-                           text=work.translate("Top:"))
-    top_label.grid(row=0, column=0, sticky="w", )
-    top_entry = CTkEntry(master=loc_frame, width=50, corner_radius=1, border_width=1, )
-    top_entry.grid(row=0, column=1, sticky="ew", padx=5)
-    bottom_label = CTkLabel(master=loc_frame,
-                            fg_color="transparent",
-                            text=work.translate("Bottom:"))
-    bottom_label.grid(row=0, column=2, sticky="w", padx=5)
-    bottom_entry = CTkEntry(master=loc_frame, width=50, corner_radius=1, border_width=1)
-    bottom_entry.grid(row=0, column=3, sticky="ew")
-    loc_frame.grid(row=2, column=0, pady=(5, 0), sticky="ew")
-
-
-    def _draw_line(event):
-        entry = event.widget
-        if entry.get() is None or entry.get() == "":
-            return
-        try:
-            row = int(entry.get())
-        except Exception:
-            message_box = TLRMessageBox(work.master,
-                                        icon="warning",
-                                        title=work.translate("Warning"),
-                                        message=work.translate("Please enter an integer!"),
-                                        button_text=[work.translate("OK")],
-                                        bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
-            return
-        if row > vh:
-            message_box = TLRMessageBox(work.master,
-                                        icon="warning",
-                                        title=work.translate("Warning"),
-                                        message=work.translate("Please enter a number less than the height of the video!"),
-                                        button_text=[work.translate("OK")],
-                                        bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
-            return
-        ratio_row = int(row * ratio)
-        ratio_w = int(vw * ratio)
-        points = np.array(
-            [
-                [0, ratio_row],
-                [ratio_w, ratio_row],
-            ]
-        )
-
-        work._video_frame.draw_line(points, fill=Config.ICON_PINK_RGB, width=3)
-
-    top_entry.bind("<FocusOut>", _draw_line)
-    bottom_entry.bind("<FocusOut>", _draw_line)
+    logger = Logger(log_path, timestamp)
 
     def _video_optimize_erase_subtitles():
-        temp_dir = os.path.join(operation_file, "temp")
-        os.makedirs(temp_dir, exist_ok=True)
-        input_data = {
-            "config": {
-                "lama": {
-                    "model": "damo/cv_fft_inpainting_lama",
-                    "device": "gpu" if work.device == "cuda" else work.device,
-                },
-            },
-            "input": {
-                "timestamp": timestamp,
-                "log_path": log_path,
-                "video_path": pre_last_video_path,
-                "top": int(top_entry.get()),
-                "down": int(bottom_entry.get()),
-            },
-            "output": {
-                "temp_dir": temp_dir,
-                "video_path": output_video_path
-            }
+        video = VideoFileClip(work.video.path)
+        fps = video.fps
+        duration = video.duration
+        nframes = int(duration * fps)
+        video.close()
+        # 1. Get some images that may have subtitles
+        def _get_image_representation_modal():
+            video = VideoFileClip(work.video.path)
+            logger.write_log(f"follow:1:1:{nframes}:0")
+            max_images_num = 50
+            interval = int(5 * fps)
+            save_count = 0
+            for i, frame in enumerate(tqdm(video.iter_frames())):
+                if i % interval == 0:
+                    temp_image_path = os.path.join(show_temp_file, f"{i:08d}.png")
+                    Image.fromarray(frame).save(temp_image_path)
+                    save_count += 1
+                if save_count >= max_images_num:
+                    break
+                logger.write_log(f"follow:1:1:{nframes}:{i + 1}")
+            logger.write_log(f"follow:1:1:{nframes}:{nframes}")
+            video.close()
 
-        }
-        video_optimize_erase_subtitles(input_data)
-
-    def _video_optimize_erase_subtitles_modal():
-        try:
-            top = int(top_entry.get())
-            bottom = int(bottom_entry.get())
-        except Exception:
-            message_box = TLRMessageBox(work.master,
-                                        icon="warning",
-                                        title=work.translate("Warning"),
-                                        message=work.translate("Please enter an integer!"),
-                                        button_text=[work.translate("OK")],
-                                        bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
-            return
-
-        if not (top < bottom <= vh):
-            message_box = TLRMessageBox(work.master,
-                                        icon="warning",
-                                        title=work.translate("Warning"),
-                                        message=work.translate("Please enter the correct top and bottom!"),
-                                        button_text=[work.translate("OK")],
-                                        bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
-            return
-        logger = Logger(log_path, timestamp)
         TLRModal(work,
-                 _video_optimize_erase_subtitles,
+                 _get_image_representation_modal,
                  fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
                  logger=logger,
                  translate_func=work.translate,
+                 rate=nframes * 1.5,
+                 error_message=work.translate("An error occurred, please try again!"),
+                 messagebox_ok_button=work.translate("OK"),
+                 messagebox_title=work.translate("Warning"),
+                 bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
+
+        # 2. Get prompt
+        sorted_images = [
+            p for p in os.listdir(show_temp_file)
+        ]
+        points = [
+            (work.translate("Subtitle Color"), 1),
+        ]
+        lines = [
+            (work.translate("Subtitle Range"), 2),
+        ]
+        line_dialog = TLRLineDialog(
+            master=work,
+            images=sorted_images,
+            image_root_path=show_temp_file,
+            lines=lines,
+            points=points,
+            point_color=Config.ICON_BLUE_RGB,
+            line_color=Config.ICON_PINK_RGB,
+            zoom_color=Config.ICON_BLUE_RGB,
+            title=work.translate("Video Optimize Erase Subtitles"),
+            previous_text=work.translate("Previous"),
+            next_text=work.translate("Next"),
+            point_text=work.translate("Please click on the internal scope of the subtitles:"),
+            line_text=work.translate("Please indicate the range of subtitles:"),
+            slider_text=work.translate("Expansion scope:"),
+            ok_button_text=work.translate("OK"),
+            cancel_button_text=work.translate("Cancel"),
+
+            messagebox_ok_button=work.translate("OK"),
+            messagebox_title=work.translate("Warning"),
+            line_prompt_warning=work.translate("Please enter the top and bottom of the subtitles first!"),
+            prompt_warning=work.translate("Please enter the top, bottom, and subtitle color prompts!"),
+            bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256),
+            remove_radius=3
+        )
+        work.dialog_show(line_dialog)
+        prompt = line_dialog.get_prompt()
+        if prompt is None or len(prompt) <= 0:
+            return
+
+        top = int(prompt["lines"][0]["data"][0][1])
+        down = int(prompt["lines"][1]["data"][0][1])
+        dilate = int(prompt["dilate"])
+        prompt_points = prompt["points"]
+        subtitles_colors = list()
+        for frame_id, val in prompt_points.items():
+            frame_name = sorted_images[frame_id]
+            frame_path = os.path.join(show_temp_file, frame_name)
+            gray_frame = Image.open(frame_path).convert("L")
+            for point in val:
+                xy = point["data"][0]
+                color = gray_frame.getpixel(xy)
+                subtitles_colors.append(color)
+
+        def _erase_subtitles():
+            temp_dir = os.path.join(operation_file, "temp")
+            os.makedirs(temp_dir, exist_ok=True)
+            input_data = {
+                "config": {
+                    "lama": {
+                        "model": "damo/cv_fft_inpainting_lama",
+                        "device": "gpu" if work.device == "cuda" else work.device,
+                    },
+                },
+                "input": {
+                    "timestamp": timestamp,
+                    "log_path": log_path,
+                    "video_path": pre_last_video_path,
+                    "top": top,
+                    "down": down,
+                    "dilate": dilate,
+                    "colors": subtitles_colors,
+                },
+                "output": {
+                    "temp_dir": temp_dir,
+                    "video_path": output_video_path
+                }
+
+            }
+            video_optimize_erase_subtitles(input_data)
+
+        TLRModal(work,
+                 _erase_subtitles,
+                 fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
+                 logger=logger,
+                 translate_func=work.translate,
+                 error_message=work.translate("An error occurred, please try again!"),
+                 messagebox_ok_button=work.translate("OK"),
+                 messagebox_title=work.translate("Warning"),
+                 bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
                  )
         work.video.path = output_video_path
         update_video = copy.deepcopy(work.video)
@@ -191,14 +201,18 @@ def alg_video_optimize_erase_subtitles(work):
         # update the cut video
         work._video_frame.set_video_path(work.video.path)
         work._clear_right_frame()
+        if os.path.exists(pre_last_video_path):
+            os.remove(pre_last_video_path)
+        shutil.rmtree(operation_temp_file, ignore_errors=True)
+        shutil.rmtree(show_temp_file, ignore_errors=True)
 
     optimize_erase_button = CTkButton(
         master=work._right_frame,
         border_width=0,
         text=work.translate("Erase Subtitles"),
-        command=_video_optimize_erase_subtitles_modal,
+        command=_video_optimize_erase_subtitles,
         anchor="center"
     )
-    optimize_erase_button.grid(row=1, column=0, pady=(10, 10), sticky="s")
+    optimize_erase_button.grid(row=0, column=0, pady=(10, 10), sticky="s")
 
 

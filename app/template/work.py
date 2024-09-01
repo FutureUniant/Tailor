@@ -187,7 +187,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                   dialog_type="import",
                                   bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256),
                                   )
-        self._dialog_show(video_box)
+        self.dialog_show(video_box)
 
     def _menu_save(self, value):
         try:
@@ -207,7 +207,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                         button_text=[self.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256)
                                         )
-        self._dialog_show(message_box)
+        self.dialog_show(message_box)
 
     def _menu_save_as(self, value):
         file_box = TLRFileDialog(self.master,
@@ -224,7 +224,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                  dialog_type="export",
                                  bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256),
                                  )
-        self._dialog_show(file_box)
+        self.dialog_show(file_box)
         save_as_path = file_box.get_file_path()
         if save_as_path != "" and save_as_path is not None:
             try:
@@ -244,7 +244,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                             button_text=[self.translate("OK")],
                                             bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256)
                                             )
-            self._dialog_show(message_box)
+            self.dialog_show(message_box)
 
     def _menu_import(self, value):
         # video import
@@ -263,7 +263,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                        dialog_type="import",
                                        bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256),
                                        )
-            self._dialog_show(import_box)
+            self.dialog_show(import_box)
             video_path = import_box.get_file_path()
             if video_path is None or video_path == "":
                 return
@@ -287,7 +287,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                         message=self.translate("Currently, Tailor can only handle a single video. More video processing versions are coming soon."),
                                         button_text=[self.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
-            self._dialog_show(message_box)
+            self.dialog_show(message_box)
 
     def _menu_export(self, value):
         # TODO: 视频导出
@@ -298,7 +298,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                         message=self.translate("There is no video here. Please import a video first."),
                                         button_text=[self.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
-            self._dialog_show(message_box)
+            self.dialog_show(message_box)
             return
         last_video = os.path.join(self.app.project_path, f"{Config.OUTPUT_VIDEO_NAME}{Config.EXPORT_VIDEO_EXTENSION}")
         if not os.path.exists(last_video):
@@ -318,7 +318,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                    default_extension=Config.EXPORT_VIDEO_EXTENSION,
                                    bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256),
                                    )
-        self._dialog_show(export_box)
+        self.dialog_show(export_box)
         export_video_path = export_box.get_file_path()
         if export_video_path is None or export_video_path == "":
             return
@@ -358,7 +358,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                           button_text=[self.translate("OK"), self.translate("Cancel")],
                                           bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256),
                                           )
-            self._dialog_show(input_dialog)
+            self.dialog_show(input_dialog)
             new_project_name = input_dialog.get_input()
             chosen = input_dialog.get_choose()
             if input_dialog.winfo_exists() == 0:
@@ -378,7 +378,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                                 message=self.translate("Please enter a valid project name, which cannot contain blank, <>:\"|?* or other special characters."),
                                                 button_text=[self.translate("OK")],
                                                 bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
-                    self._dialog_show(message_box)
+                    self.dialog_show(message_box)
                     message_box.get_choose()
 
     def _menu_language(self, value):
@@ -396,7 +396,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                       cancel_button_text=self.translate("Cancel"),
                                       bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
 
-        self._dialog_show(radio_dialog)
+        self.dialog_show(radio_dialog)
         key = radio_dialog.get()
         if key in key2sign:
             self.app.switch_language(key2sign[key], widnow_name=WINDOW_NAME)
@@ -416,7 +416,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
                                       cancel_button_text=self.translate("Cancel"),
                                       bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
 
-        self._dialog_show(radio_dialog)
+        self.dialog_show(radio_dialog)
         idx = radio_dialog.get()
         if idx in idx2sign:
             self.app.switch_theme(idx2sign[idx], widnow_name=WINDOW_NAME)
@@ -425,12 +425,12 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         message_box = TLRMessageBox(self.master,
                                     icon="info",
                                     title=value,
-                                    message=self.translate("Tailor Version 0.1.0.\n"),
+                                    message=self.translate("Tailor Version 0.1.4.\n"),
                                     button_text=[self.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
-        self._dialog_show(message_box)
+        self.dialog_show(message_box)
 
-    def _dialog_show(self, dialog):
+    def dialog_show(self, dialog):
         # 获取屏幕宽度和高度
         master_width = self.master.winfo_screenwidth()
         master_height = self.master.winfo_screenheight()

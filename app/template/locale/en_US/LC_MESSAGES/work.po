@@ -39,8 +39,8 @@ msgstr "Please choose one of the following languages:"
 msgid "Please choose one of the following themes:"
 msgstr "Please choose one of the following themes:"
 
-msgid "Tailor Version 0.1.0.\n"
-msgstr "Tailor Version 0.1.0.\n"
+msgid "Tailor Version 0.1.4.\n"
+msgstr "Tailor Version 0.1.4.\n"
 
 msgid "Rename Project"
 msgstr "Rename Project"
@@ -157,7 +157,7 @@ msgid "Male·Rich"
 msgstr "Male·Rich"
 
 msgid "Male·Mellow"
-msgstr "男·醇厚"
+msgstr "Male·Mellow"
 
 msgid "Male·Dynamic"
 msgstr "Male·Dynamic"
@@ -383,3 +383,69 @@ msgstr "Please enter a number less than the height of the video!"
 
 msgid "Please enter the correct top and bottom!"
 msgstr "Please enter the correct top and bottom!"
+
+msgid "Video Optimize Erase Subtitles"
+msgstr "Erase Subtitles"
+
+msgid "Previous"
+msgstr "Previous"
+
+msgid "Next"
+msgstr "Next"
+
+msgid "Please click on the internal scope of the subtitles:"
+msgstr "Please click on the internal scope of the subtitles:"
+
+msgid "Please indicate the range of subtitles:"
+msgstr "Please indicate the range of subtitles:"
+
+msgid "Please enter the top and bottom of the subtitles first!"
+msgstr "Please enter the top and bottom of the subtitles first!"
+
+msgid "Please enter the top, bottom, and subtitle color prompts!"
+msgstr "Please enter the top, bottom, and subtitle color prompts!"
+
+msgid "Subtitle Color"
+msgstr "Subtitle Color"
+
+msgid "Subtitle Range"
+msgstr "Subtitle Range"
+
+msgid "Video Optimize Eraser Target"
+msgstr "Eraser Target"
+
+msgid "Point Prompt:"
+msgstr "Point Prompt:"
+
+msgid "Please enter the prompt!"
+msgstr "Please enter the prompt!"
+
+msgid "hiera_tiny"
+msgstr "Tiny"
+
+msgid "hiera_small"
+msgstr "Small"
+
+msgid "hiera_base_plus"
+msgstr "Base"
+
+msgid "hiera_large"
+msgstr "Large"
+
+msgid "Target Remove"
+msgstr "Target Remove"
+
+msgid "An error occurred, please try again!"
+msgstr "An error occurred, please try again!"
+
+msgid "Expansion scope:"
+msgstr "Expansion scope:"
+
+msgid "Eraser"
+msgstr "Eraser"
+
+msgid "Retain"
+msgstr "Retain"
+
+msgid "Video Initial"
+msgstr "Video Initial"

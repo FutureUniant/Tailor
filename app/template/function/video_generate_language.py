@@ -32,7 +32,7 @@ def alg_video_generate_language(work):
                                     message=work.translate("Please import the video file you want to process first."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     timestamp = Timer.get_timestamp()
@@ -62,7 +62,7 @@ def alg_video_generate_language(work):
         ok_button_text=work.translate("OK"),
         cancel_button_text=work.translate("Cancel"),
     )
-    work._dialog_show(video_language_audio_dialog)
+    work.dialog_show(video_language_audio_dialog)
     chosen = video_language_audio_dialog.get()
     if not video_language_audio_dialog.is_valid():
         return
@@ -99,7 +99,11 @@ def alg_video_generate_language(work):
              _video_generate_srt,
              fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
              logger=logger,
-             translate_func=work.translate
+             translate_func=work.translate,
+             error_message=work.translate("An error occurred, please try again!"),
+             messagebox_ok_button=work.translate("OK"),
+             messagebox_title=work.translate("Warning"),
+             bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
              )
 
     with open(srt_path, encoding="utf-8") as f:
@@ -297,7 +301,11 @@ def gen_video_generate_language(work, subs, table, **kwargs):
              _video_gen_language,
              fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
              logger=logger,
-             translate_func=work.translate
+             translate_func=work.translate,
+             error_message=work.translate("An error occurred, please try again!"),
+             messagebox_ok_button=work.translate("OK"),
+             messagebox_title=work.translate("Warning"),
+             bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
              )
 
     # TODO: update work.video and update video table in project's DB

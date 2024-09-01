@@ -145,9 +145,6 @@ class TLRVideoFrame(CTkFrame):
     def get_current_image(self):
         return self._player.current_image
 
-    def draw_line(self, line, fill="green", width=5):
-        return self._player.draw_line(line, fill=fill, width=width)
-
     def close(self):
         self._player.player_close()
 

@@ -30,7 +30,7 @@ def alg_video_generate_audio(work):
                                         "There is already a video in the project, and Tailor can only handle one video at a time, so please create a new project."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     timestamp = Timer.get_timestamp()
@@ -223,7 +223,7 @@ def alg_video_generate_audio(work):
                                         message=work.translate("Please enter the width in integer format!"),
                                         button_text=[work.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
+            work.dialog_show(message_box)
             return
         height = height_entry.get()
         try:
@@ -235,7 +235,7 @@ def alg_video_generate_audio(work):
                                         message=work.translate("Please enter the height in integer format!"),
                                         button_text=[work.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
+            work.dialog_show(message_box)
             return
         if not os.path.exists(image_entry_var.get()):
             message_box = TLRMessageBox(work.master,
@@ -244,7 +244,7 @@ def alg_video_generate_audio(work):
                                         message=work.translate("Please enter a valid image path."),
                                         button_text=[work.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
+            work.dialog_show(message_box)
             return
         textbox_value = textbox.get("0.0", "end")
         if textbox_value is None or textbox_value.replace("\n", "").replace(" ", "") == "":
@@ -254,14 +254,18 @@ def alg_video_generate_audio(work):
                                         message=work.translate("Please enter the text you want to convert to speech."),
                                         button_text=[work.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
+            work.dialog_show(message_box)
             return
         logger = Logger(log_path, timestamp)
         TLRModal(work,
                  _video_generate_audio,
                  fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
                  logger=logger,
-                 translate_func=work.translate
+                 translate_func=work.translate,
+                 error_message=work.translate("An error occurred, please try again!"),
+                 messagebox_ok_button=work.translate("OK"),
+                 messagebox_title=work.translate("Warning"),
+                 bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
                  )
         work.video.path = output_video_path
         update_video = copy.deepcopy(work.video)

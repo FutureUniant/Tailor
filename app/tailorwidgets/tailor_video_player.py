@@ -288,17 +288,6 @@ class TLRVideoPlayer(CTkFrame):
             t_start = self.get_duration() - 1 / fps
         return t_start
 
-    def draw_line(self, line, fill="green", width=5):
-        self.pause()
-        draw_image = self.current_image.copy()
-        draw = ImageDraw.Draw(draw_image)
-        points = tuple(line.reshape((-1, )).tolist())
-        draw.line(points, fill=fill, width=width)
-        frame = ImageTk.PhotoImage(draw_image)
-        self._video_frame['image'] = frame
-        self._video_frame.image = frame
-        self._video_frame.update()
-
     def player_close(self):
         if self._video_thread and self._video_thread.is_alive():
             stop_thread(self._video_thread)

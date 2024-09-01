@@ -259,6 +259,34 @@ HELSINKI_NLP_MODELS = {
 }
 
 
+SAM2_MODELS = {
+    "tiny":
+        (
+            "sam2_hiera_tiny.pt",
+            "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_tiny.pt",
+            155906050,
+        ),
+    "base":
+        (
+            "sam2_hiera_base_plus.pt",
+            "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_base_plus.pt",
+            323493298,
+        ),
+    "small":
+        (
+            "sam2_hiera_small.pt",
+            "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_small.pt",
+            184309650,
+        ),
+    "large":
+        (
+            "sam2_hiera_large.pt",
+            "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_large.pt",
+            897952466,
+        ),
+}
+
+
 class Downloader:
     def __init__(self, root_path, download_infos):
         self.root_path = root_path

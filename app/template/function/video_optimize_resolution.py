@@ -26,7 +26,7 @@ def alg_video_optimize_resolution(work):
                                     message=work.translate("Please import the video file you want to process first."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     timestamp = Timer.get_timestamp()
@@ -76,6 +76,10 @@ def alg_video_optimize_resolution(work):
                  fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
                  logger=logger,
                  translate_func=work.translate,
+                 error_message=work.translate("An error occurred, please try again!"),
+                 messagebox_ok_button=work.translate("OK"),
+                 messagebox_title=work.translate("Warning"),
+                 bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
                  )
         work.video.path = output_video_path
         update_video = copy.deepcopy(work.video)

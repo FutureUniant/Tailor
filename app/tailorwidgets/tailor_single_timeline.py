@@ -179,7 +179,6 @@ class TLRSingleTimeline(CTkFrame):
                                              size=self._play_size)
         self._right_frame = CTkFrame(self,
                                      fg_color=self._apply_appearance_mode(self._bg_color),
-                                     # fg_color="yellow",
                                      corner_radius=0)
         self._right_frame.grid(row=0, column=1, sticky="news")
         self._right_frame.grid_columnconfigure(0, weight=1)

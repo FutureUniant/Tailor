@@ -39,8 +39,8 @@ msgstr "请选择以下一种语言："
 msgid "Please choose one of the following themes:"
 msgstr "请选择以下一种主题："
 
-msgid "Tailor Version 0.1.0.\n"
-msgstr "Tailor 0.1.0 版本\n"
+msgid "Tailor Version 0.1.4.\n"
+msgstr "Tailor 0.1.4 版本\n"
 
 msgid "Rename Project"
 msgstr "工程重命名"
@@ -50,7 +50,6 @@ msgstr "输入新的工程名："
 
 msgid "Please enter a valid project name, which cannot contain blank, <>:\"|?* or other special characters."
 msgstr "请输入有效的工程名，不能包含空格、<>:\"|?*等特殊字符"
-
 
 msgid "Video Path"
 msgstr "视频路径"
@@ -384,3 +383,69 @@ msgstr "请输入一个小于视频高度的整数！"
 
 msgid "Please enter the correct top and bottom!"
 msgstr "请输入正确的顶部和底部！"
+
+msgid "Video Optimize Erase Subtitles"
+msgstr "字幕消除"
+
+msgid "Previous"
+msgstr "前一张"
+
+msgid "Next"
+msgstr "后一张"
+
+msgid "Please click on the internal scope of the subtitles:"
+msgstr "请点击字幕的内部颜色："
+
+msgid "Please indicate the range of subtitles:"
+msgstr "请提示字幕的范围："
+
+msgid "Please enter the top and bottom of the subtitles first!"
+msgstr "请先输入字幕的顶部和底部！"
+
+msgid "Please enter the top, bottom, and subtitle color prompts!"
+msgstr "请输入顶部、底部和字幕颜色提示！"
+
+msgid "Subtitle Color"
+msgstr "字幕颜色"
+
+msgid "Subtitle Range"
+msgstr "字幕范围"
+
+msgid "Video Optimize Eraser Target"
+msgstr "目标消除"
+
+msgid "Point Prompt:"
+msgstr "点提示:"
+
+msgid "Please enter the prompt!"
+msgstr "请输入提示！"
+
+msgid "hiera_tiny"
+msgstr "超小模型"
+
+msgid "hiera_small"
+msgstr "小模型"
+
+msgid "hiera_base_plus"
+msgstr "中模型"
+
+msgid "hiera_large"
+msgstr "大模型"
+
+msgid "Target Remove"
+msgstr "目标消除"
+
+msgid "An error occurred, please try again!"
+msgstr "发生错误，请重试！"
+
+msgid "Expansion scope:"
+msgstr "范围扩张："
+
+msgid "Eraser"
+msgstr "擦除"
+
+msgid "Retain"
+msgstr "保留"
+
+msgid "Video Initial"
+msgstr "视频初始化"

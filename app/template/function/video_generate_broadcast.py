@@ -31,7 +31,7 @@ def alg_video_generate_broadcast(work):
                                         "There is already a video in the project, and Tailor can only handle one video at a time, so please create a new project."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     timestamp = Timer.get_timestamp()
@@ -289,7 +289,7 @@ def alg_video_generate_broadcast(work):
                                         message=work.translate("No human face detected in the input image!"),
                                         button_text=[work.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
+            work.dialog_show(message_box)
 
     def _video_generate_broadcast_modal():
         width = width_entry.get()
@@ -302,7 +302,7 @@ def alg_video_generate_broadcast(work):
                                         message=work.translate("Please enter the width in integer format!"),
                                         button_text=[work.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
+            work.dialog_show(message_box)
             return
         height = height_entry.get()
         try:
@@ -314,7 +314,7 @@ def alg_video_generate_broadcast(work):
                                         message=work.translate("Please enter the height in integer format!"),
                                         button_text=[work.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
+            work.dialog_show(message_box)
             return
         if not os.path.exists(image_entry_var.get()):
             message_box = TLRMessageBox(work.master,
@@ -323,7 +323,7 @@ def alg_video_generate_broadcast(work):
                                         message=work.translate("Please enter a valid image path."),
                                         button_text=[work.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
+            work.dialog_show(message_box)
             return
 
         if text_audio_tabview.get() == work.translate("Text"):
@@ -336,7 +336,7 @@ def alg_video_generate_broadcast(work):
                                                 "Please enter the text you want to convert to speech."),
                                             button_text=[work.translate("OK")],
                                             bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-                work._dialog_show(message_box)
+                work.dialog_show(message_box)
                 return
         else:
             if not os.path.exists(audio_entry_var.get()):
@@ -346,7 +346,7 @@ def alg_video_generate_broadcast(work):
                                             message=work.translate("Please enter a valid audio path."),
                                             button_text=[work.translate("OK")],
                                             bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-                work._dialog_show(message_box)
+                work.dialog_show(message_box)
                 return
         logger = Logger(log_path, timestamp)
         TLRModal(work,
@@ -354,7 +354,11 @@ def alg_video_generate_broadcast(work):
                  fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
                  logger=logger,
                  translate_func=work.translate,
-                 rate=30
+                 rate=30,
+                 error_message=work.translate("An error occurred, please try again!"),
+                 messagebox_ok_button=work.translate("OK"),
+                 messagebox_title=work.translate("Warning"),
+                 bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
                  )
         work.video.path = output_video_path
         update_video = copy.deepcopy(work.video)

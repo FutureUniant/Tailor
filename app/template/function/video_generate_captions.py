@@ -31,7 +31,7 @@ def alg_video_generate_captions(work):
                                     message=work.translate("Please import the video file you want to process first."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     timestamp = Timer.get_timestamp()
@@ -61,7 +61,7 @@ def alg_video_generate_captions(work):
         ok_button_text=work.translate("OK"),
         cancel_button_text=work.translate("Cancel"),
     )
-    work._dialog_show(video_cut_audio_dialog)
+    work.dialog_show(video_cut_audio_dialog)
     chosen = video_cut_audio_dialog.get()
     if not video_cut_audio_dialog.is_valid():
         return
@@ -96,7 +96,11 @@ def alg_video_generate_captions(work):
              _video_generate_captions,
              fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
              logger=logger,
-             translate_func=work.translate
+             translate_func=work.translate,
+             error_message=work.translate("An error occurred, please try again!"),
+             messagebox_ok_button=work.translate("OK"),
+             messagebox_title=work.translate("Warning"),
+             bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
              )
 
     with open(srt_path, encoding="utf-8") as f:
@@ -305,7 +309,7 @@ def gen_video_generate_captions(work, subs, table, **kwargs):
                                     message=work.translate("Please input integer in Font Size."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     try:
@@ -318,7 +322,7 @@ def gen_video_generate_captions(work, subs, table, **kwargs):
                                     message=work.translate("Please input integer in Stroke Width."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     try:
@@ -331,7 +335,7 @@ def gen_video_generate_captions(work, subs, table, **kwargs):
                                     message=work.translate("Please input integer in Caption Distance."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     font_color = kwargs["font_color"].get()
@@ -384,7 +388,11 @@ def gen_video_generate_captions(work, subs, table, **kwargs):
              _video_gen_caption,
              fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
              logger=logger,
-             translate_func=work.translate
+             translate_func=work.translate,
+             error_message=work.translate("An error occurred, please try again!"),
+             messagebox_ok_button=work.translate("OK"),
+             messagebox_title=work.translate("Warning"),
+             bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
              )
 
     # TODO: update work.video and update video table in project's DB

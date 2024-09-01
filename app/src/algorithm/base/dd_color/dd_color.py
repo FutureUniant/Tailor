@@ -54,6 +54,7 @@ class DDColor:
         output_video = output_video.set_audio(input_video.audio)
         output_video.write_videofile(output_path)
         shutil.rmtree(temp_path)
+        input_video.close()
         self.logger.write_log(f"interval:2:2:1:1")
         return output_path
 

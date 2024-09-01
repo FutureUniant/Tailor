@@ -6,6 +6,8 @@ from typing import Union, Tuple, Optional, Callable
 from threading import Thread
 from customtkinter import CTkProgressBar, CTkToplevel, CTkLabel
 
+from app.tailorwidgets.tailor_message_box import TLRMessageBox
+
 
 class TLRModal(CTkToplevel):
     def __init__(self,
@@ -20,6 +22,10 @@ class TLRModal(CTkToplevel):
                  indeterminate_speed=0.5,
                  alpha=0.95,
                  rate=5,
+                 error_message="An error occurred, please try again!",
+                 messagebox_ok_button: str = "Ok",
+                 messagebox_title: str = "Warning",
+                 bitmap_path: str = None,
                  ):
 
         super().__init__(fg_color=fg_color)
@@ -30,6 +36,10 @@ class TLRModal(CTkToplevel):
         self.indeterminate_speed = indeterminate_speed
         self.alpha = alpha
         self.rate = rate
+        self.messagebox_ok_button = messagebox_ok_button
+        self.messagebox_title = messagebox_title
+        self.error_message = error_message
+        self.bitmap_path = bitmap_path
 
         self.task = task
         self.logger = logger
@@ -48,12 +58,19 @@ class TLRModal(CTkToplevel):
         self._create_widgets()
 
     def _wrapper_task(self):
-        # TODO: 调试完成后，这里需要try...catch，防止错误产生后，一致Modal状态
-        # try:
-        self.task()
-        self.alive = False
-        # except:
-        #     pass
+        try:
+            self.task()
+            self.alive = False
+        except:
+            message_box = TLRMessageBox(self,
+                                        title=self.messagebox_title,
+                                        message=f"{self.error_message}",
+                                        icon="warning",
+                                        button_text=[self.messagebox_ok_button],
+                                        bitmap_path=self.bitmap_path)
+            x = self.winfo_x()
+            y = self.winfo_y()
+            message_box.geometry("+{}+{}".format(x, y))
         try:
             if self.progressbar.winfo_exists():
                 self.progressbar.destroy()

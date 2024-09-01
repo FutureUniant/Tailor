@@ -1,4 +1,7 @@
+import math
 import os
+import random
+
 import torch
 import cv2
 import copy
@@ -21,7 +24,6 @@ class FaceAnalysis:
         self.device = self.config["device"]
 
         # MTCNN
-        self.times_per_second = self.config["times_per_second"]
         self.min_face_scale = self.config["min_face_scale"]
         # margin {int} -- Margin to add to bounding box, in terms of pixels in the final image.
         # Note that the application of the margin differs slightly from the davidsandberg/facenet
@@ -31,14 +33,21 @@ class FaceAnalysis:
         # Probability threshold for determining as a face
         self.prob = self.config["prob"]
         # Threshold for determining the same person
-        self.threshold = self.config["threshold"]
+        self.face_threshold = self.config["face_threshold"]
         # # The maximum number of facial comparisons after getting all faces
         # self.compare_face_num = self.config["compare_face_num"]
+        self.mtcnn = TailorMTCNN(keep_all=True, min_face_size=10, device=self.device)
+
+        # key frame config
+        self.key_threshold = self.config["key_threshold"]
+        self.change_percentage = self.config["change_percentage"]
 
         self.ignore_duration = self.config["ignore_duration"]
         self.encoding = self.config["encoding"]
 
         self.pretrained = self.config["checkpoint"]
+        self.recognized_batch_size = self.config["recognized_batch_size"]
+        self.resnet = TailorInceptionResnetV1(self.pretrained).eval().to(self.device)
 
         faces_folder = self.input_data["output"]["faces_folder"]
         os.makedirs(faces_folder, exist_ok=True)
@@ -49,111 +58,161 @@ class FaceAnalysis:
 
     def run(self):
 
-        self.logger.write_log("interval:5:1:1:0")
-        frames, timestamps, size = self.get_frames()
-        self.logger.write_log("interval:5:1:1:1")
+        self.logger.write_log("interval:4:1:1:0")
+        faces, faces_ts, faces_box, key_frame_ts, size = self.get_key_frames_faces()
+        self.logger.write_log("interval:4:1:1:1")
 
-        self.logger.write_log("interval:5:2:1:0")
-        faces, faces_ts, faces_box = self.get_faces(frames, timestamps, size)
-        self.logger.write_log("interval:5:2:1:1")
-
-        self.logger.write_log("interval:5:3:1:0")
+        self.logger.write_log("interval:4:2:1:0")
         unique_face_infos = self.recognized_face(faces)
-        self.logger.write_log("interval:5:3:1:1")
+        self.logger.write_log("interval:4:2:1:1")
 
-        self.logger.write_log("interval:5:4:1:0")
-        unique_face_infos = self.extract_faces(unique_face_infos, faces_ts, faces_box, frames, timestamps, size)
-        self.logger.write_log("interval:5:4:1:1")
+        self.logger.write_log("interval:4:3:1:0")
+        unique_face_infos = self.extract_faces(unique_face_infos, faces_ts, faces_box, size)
+        self.logger.write_log("interval:4:3:1:1")
 
-        self.logger.write_log("interval:5:5:1:0")
-        self.extract_segments(unique_face_infos, faces_ts, timestamps)
-        self.logger.write_log("interval:5:5:1:1")
+        self.logger.write_log("interval:4:4:1:0")
+        self.extract_segments(unique_face_infos, faces_ts, key_frame_ts)
+        self.logger.write_log("interval:4:4:1:1")
 
-    def get_frames(self):
-        # TODO: For fast computation, only one frame of image per second is obtained for face detection here.
-        #  Afterwards, it can be optimized.
+    def get_key_frames_faces(self):
         video = cv2.VideoCapture(self.input_data["input"]["video_path"])
 
         width    = video.get(cv2.CAP_PROP_FRAME_WIDTH)
         height   = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        fps      = video.get(cv2.CAP_PROP_FPS) + 0.5
-        interval = max(int(fps / self.times_per_second + 0.5), 1)
 
-        frames     = list()
-        timestamps = list()
-        idx = 0
+        min_change_size = self.change_percentage * width * height
+
+        # MTCNN Model
+        min_face_size = self.min_face_scale * max(width, height)
+        self.mtcnn.min_face_size = min_face_size
+
+        face_tensors   = list()
+        face_ts        = list()
+        face_boxes     = list()
+        key_frame_ts   = list()
+        gray_prev = None
+        last_timestamp = -1
         while True:
-            ret, frame = video.read()
-            if frame is None:
+            ret, curr_frame = video.read()
+            if not ret:
                 break
+            last_timestamp = video.get(cv2.CAP_PROP_POS_MSEC)
+            if gray_prev is not None:
+                gray_curr = cv2.cvtColor(curr_frame, cv2.COLOR_BGR2GRAY)
+                # Calculate absolute difference and binary it
+                frame_diff = cv2.absdiff(gray_prev, gray_curr)
+                _, thresh_diff = cv2.threshold(frame_diff, self.key_threshold, 255, cv2.THRESH_BINARY)
+                # Calculate the number of differential pixels
+                change_size = np.sum(thresh_diff != 0)
+                # If the difference exceeds the set size, save the current frame
+                if change_size > min_change_size:
+                    timestamp = last_timestamp
+                    last_timestamp = -1
+                    key_frame_ts.append(timestamp)
+                    curr_faces, timestamps, curr_boxes = self.get_frame_faces(curr_frame, timestamp)
+                    face_tensors += curr_faces
+                    face_ts += timestamps
+                    face_boxes += curr_boxes
+                gray_prev = gray_curr
             else:
-                if idx % interval == 0:
-                    timestamp = video.get(cv2.CAP_PROP_POS_MSEC)
-                    timestamps.append(timestamp)
-                    frames.append(Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
-            idx += 1
+                gray_prev = cv2.cvtColor(curr_frame, cv2.COLOR_BGR2GRAY)
+
+        if last_timestamp != -1:
+            key_frame_ts.append(last_timestamp)
         video.release()
 
-        return frames, timestamps, (width, height)
+        return face_tensors, face_ts, face_boxes, key_frame_ts, (width, height)
 
-    def get_faces(self, frames, timestamps, size):
-        min_face_size = self.min_face_scale * max(size)
-        mtcnn = TailorMTCNN(keep_all=True, min_face_size=min_face_size, device=self.device)
-
-        faces = list()
-        faces_ts = list()
-        faces_box = list()
-        for i, (frame, timestamp) in enumerate(zip(frames, timestamps)):
-            face_tensors, probs, boxes = mtcnn(frame, return_prob=True, return_boxes=True)
-            if face_tensors is None:
-                continue
+    def get_frame_faces(self, frame, timestamp):
+        return_faces = list()
+        return_ts    = list()
+        return_boxes = list()
+        face_tensors, probs, boxes = self.mtcnn(frame, return_prob=True, return_boxes=True)
+        if face_tensors is not None:
             for face_id, (face_tensor, prob, box) in enumerate(zip(face_tensors, probs, boxes)):
                 if prob > self.prob:
-                    faces.append(face_tensor)
-                    faces_ts.append(timestamp)
-                    faces_box.append(box)
-        return faces, faces_ts, faces_box
+                    return_faces.append(face_tensor)
+                    return_ts.append(timestamp)
+                    return_boxes.append(box)
+
+        return return_faces, return_ts, return_boxes
 
     def recognized_face(self, faces):
-        resnet = TailorInceptionResnetV1(self.pretrained).eval().to(self.device)
-
-        faces = torch.stack(faces).to(self.device)
-        embeddings = resnet(faces).detach().cpu()
-        # TODO: can speed up
-        dists = [[(e1 - e2).norm().item() for e2 in embeddings] for e1 in embeddings]
-        origin_dists = np.asarray(dists)
-
-        dists = copy.deepcopy(origin_dists)
-        dists[dists <= self.threshold] = 0
-        N = len(faces)
-
+        num_faces = len(faces)
         unique_face_infos = {
             0: [0]
         }
-        for i in range(1, N):
-            have_been_compared_face = dists[i][: i]
-            unique_face = not np.any(have_been_compared_face == 0)
-            if unique_face:
-                unique_face_infos[i] = [i]
-            else:
-                same_face_ids = np.where(have_been_compared_face == 0)[0]
-                unique_face_id = -1
-                for same_face_id in same_face_ids:
-                    if same_face_id in unique_face_infos.keys():
-                        unique_face_id = same_face_id
-                        break
-                if unique_face_id != -1:
-                    unique_face_infos[unique_face_id].append(i)
+        batch_faces = torch.unsqueeze(faces[0], 0).to(self.device)
+        batch_embeddings = self.resnet(batch_faces).detach().cpu()
+        unique_face_ids = [0]
+        unique_face_embeddings = [batch_embeddings[0]]
+
+        for start_index in range(1, num_faces, self.recognized_batch_size):
+            end_index = min(start_index + self.recognized_batch_size, num_faces)
+            batch_num = end_index - start_index
+            unique_face_num = len(unique_face_infos)
+
+            batch_faces = faces[start_index:end_index]
+            batch_faces = torch.stack(batch_faces).to(self.device)
+            batch_embeddings = self.resnet(batch_faces).detach()
+
+            pre_unique_face_embeddings = torch.stack(unique_face_embeddings).to(self.device)
+            pre_unique_face_embeddings = torch.cat([pre_unique_face_embeddings, batch_embeddings]).to(self.device)
+
+            # 扩展维度以进行广播计算
+            batch_embeddings_expanded = batch_embeddings.unsqueeze(1)
+            pre_unique_face_embeddings_expanded = pre_unique_face_embeddings.unsqueeze(0)
+
+            # 计算差值
+            differences = batch_embeddings_expanded - pre_unique_face_embeddings_expanded
+
+            # 计算差值的范数
+            batch_dists = torch.norm(differences, dim=2)
+            batch_dists = batch_dists.cpu().numpy()
+            batch_dists[batch_dists <= self.face_threshold] = 0
+            for i in range(batch_num):
+                have_been_compared_face = batch_dists[i][: unique_face_num + i]
+                unique_face = not np.any(have_been_compared_face == 0)
+                if unique_face:
+                    unique_face_infos[start_index + i] = [start_index + i]
+                    unique_face_embeddings.append(batch_embeddings[i].cpu())
+                    unique_face_ids.append(start_index + i)
+                else:
+                    same_face_ids = np.where(have_been_compared_face == 0)[0]
+
+                    unique_face_id = -1
+                    for same_face_id in same_face_ids:
+                        if same_face_id < unique_face_num:
+                            same_face_id = unique_face_ids[same_face_id]
+                        else:
+                            same_face_id = same_face_id - unique_face_num + start_index
+                        if same_face_id in unique_face_infos.keys():
+                            unique_face_id = same_face_id
+                            break
+                    if unique_face_id != -1:
+                        unique_face_infos[unique_face_id].append(start_index + i)
         return unique_face_infos
 
-    def extract_faces(self, unique_face_infos, faces_ts, faces_box, frames, timestamps, size):
+    def extract_faces(self, unique_face_infos, faces_ts, faces_box, size):
         faces_folder = self.input_data["output"]["faces_folder"]
+        unique_face_tss = [faces_ts[unique_face_id] for unique_face_id in unique_face_infos.keys()]
+
+        unique_face_frames = dict()
+        video = cv2.VideoCapture(self.input_data["input"]["video_path"])
+        while True:
+            ret, curr_frame = video.read()
+            if not ret:
+                break
+            timestamp = video.get(cv2.CAP_PROP_POS_MSEC)
+            if timestamp in unique_face_tss and timestamp not in unique_face_frames.keys():
+                unique_face_frames[timestamp] = Image.fromarray(cv2.cvtColor(curr_frame, cv2.COLOR_BGR2RGB))
+        video.release()
+
         new_unique_face_infos = dict()
         for i, unique_face_id in enumerate(unique_face_infos.keys()):
             unique_face_ts = faces_ts[unique_face_id]
             unique_face_box = faces_box[unique_face_id]
-            frame_id = timestamps.index(unique_face_ts)
-            frame = frames[frame_id]
+            frame = unique_face_frames[unique_face_ts]
             face_path = os.path.join(faces_folder, f"ts_{unique_face_ts}_face_id_{unique_face_id}.png")
             self._extract_face(frame, unique_face_box, size, save_path=face_path)
             new_unique_face_infos[face_path] = unique_face_infos[unique_face_id]
@@ -182,18 +241,18 @@ class FaceAnalysis:
         if save_path is not None:
             face.save(save_path)
 
-    def extract_segments(self, unique_face_infos, faces_ts, timestamps):
-        N = len(timestamps)
+    def extract_segments(self, unique_face_infos, faces_ts, key_frame_ts):
+        N = len(key_frame_ts)
         face_segments = dict()
         for unique_face_id, face_appear_ids in unique_face_infos.items():
             start_timestamps = list()
             end_timestamps   = list()
             for face_appear_id in face_appear_ids:
                 start_timestamp = faces_ts[face_appear_id]
-                start_timestamp_id = timestamps.index(start_timestamp)
+                start_timestamp_id = key_frame_ts.index(start_timestamp)
                 if start_timestamp_id == N - 1:
                     continue
-                end_timestamp = timestamps[start_timestamp_id + 1]
+                end_timestamp = key_frame_ts[start_timestamp_id + 1]
                 start_timestamps.append(start_timestamp)
                 end_timestamps.append(end_timestamp)
             segment_timestamps = list(set(start_timestamps) - set(end_timestamps)) + list(set(end_timestamps) - set(start_timestamps))
@@ -214,24 +273,3 @@ class FaceAnalysis:
         json_path = os.path.join(faces_folder, "segment.json")
         with open(json_path, "w", encoding=self.encoding) as f:
             json.dump(face_segments, f, indent=4)
-
-
-            # ts_end_ids = list(map(lambda x: x + 1, ts_ids))
-            # segment_ids = list(set(ts_ids) - set(ts_end_ids)) + list(set(ts_end_ids) - set(ts_ids))
-            # segment_ids = sorted(segment_ids)
-            # segments = list()
-            # for i in range(int(len(segment_ids) / 2)):
-            #     start = faces_ts[segment_ids[2 * i]]
-            #     if segment_ids[2 * i + 1] >= N:
-            #         end = -1
-            #     else:
-            #         end = faces_ts[segment_ids[2 * i + 1]]
-            #     segment = {
-            #         "start": start,
-            #         "end": end,
-            #     }
-            #     segments.append(segment)
-            # face_segments[face_id] = segments
-
-
-

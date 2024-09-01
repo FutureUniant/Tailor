@@ -7,11 +7,11 @@ from transformers import pipeline
 from app.utils.paths import Paths
 from app.src.algorithm.utils.download import Downloader, HELSINKI_NLP_MODELS
 
-_FACENET_ROOT = os.path.join(Paths.ALGORITHM, "base", "helsinki_nlp", "checkpoint")
+_TRANSLATE_ROOT = os.path.join(Paths.ALGORITHM, "base", "helsinki_nlp", "checkpoint")
 
 TASK2MODEL = {
-    "opus-mt-zh-en": os.path.join(_FACENET_ROOT, "opus-mt-zh-en"),
-    "opus-mt-en-zh": os.path.join(_FACENET_ROOT, "opus-mt-en-zh")
+    "opus-mt-zh-en": os.path.join(_TRANSLATE_ROOT, "opus-mt-zh-en"),
+    "opus-mt-en-zh": os.path.join(_TRANSLATE_ROOT, "opus-mt-en-zh")
 }
 
 

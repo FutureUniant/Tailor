@@ -28,7 +28,7 @@ def alg_video_optimize_fluency(work):
                                     message=work.translate("Please import the video file you want to process first."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     timestamp = Timer.get_timestamp()
@@ -100,7 +100,7 @@ def alg_video_optimize_fluency(work):
                                             "Please enter a valid FPS, more than current FPS and less than 60."),
                                         button_text=[work.translate("OK")],
                                         bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-            work._dialog_show(message_box)
+            work.dialog_show(message_box)
             return
         rate = int(int(expected_fps) / current_fps * video_duration * 30)
         logger = Logger(log_path, timestamp)
@@ -109,7 +109,11 @@ def alg_video_optimize_fluency(work):
                  fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
                  logger=logger,
                  translate_func=work.translate,
-                 rate=rate
+                 rate=rate,
+                 error_message=work.translate("An error occurred, please try again!"),
+                 messagebox_ok_button=work.translate("OK"),
+                 messagebox_title=work.translate("Warning"),
+                 bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
                  )
         work.video.path = output_video_path
         update_video = copy.deepcopy(work.video)

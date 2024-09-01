@@ -3,6 +3,8 @@ import json
 import copy
 from PIL import Image
 
+from moviepy.editor import VideoFileClip
+
 from customtkinter import CTkScrollableFrame, CTkButton, CTkImage, CTkLabel
 
 from app.tailorwidgets.tailor_modal import TLRModal
@@ -30,7 +32,7 @@ def alg_video_cut_face(work):
                                     message=work.translate("Please import the video file you want to process first."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     timestamp = Timer.get_timestamp()
@@ -44,7 +46,7 @@ def alg_video_cut_face(work):
         button_text=[work.translate("OK"), work.translate("Cancel")],
         bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256),
     )
-    work._dialog_show(video_cut_face_dialog)
+    work.dialog_show(video_cut_face_dialog)
     face_threshold = video_cut_face_dialog.get_input()
     if not video_cut_face_dialog.get_choose():
         return
@@ -57,7 +59,7 @@ def alg_video_cut_face(work):
                                     message=work.translate("Please enter a decimal number between 0 and 1."),
                                     button_text=[work.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256))
-        work._dialog_show(message_box)
+        work.dialog_show(message_box)
         return
 
     json_path = os.path.join(operation_file, "segment.json")
@@ -71,8 +73,10 @@ def alg_video_cut_face(work):
                 "min_face_scale": face_threshold,
                 "margin": 0,
                 "prob": 0.95,
-                "threshold": 0.8,
-                # "compare_face_num": 300,
+                "face_threshold": 0.8,
+                "key_threshold": 30,
+                "change_percentage": 0.1,
+                "recognized_batch_size": 300,
                 "ignore_duration": 0,
                 "encoding": Config.ENCODING,
                 "checkpoint": "vggface2"  # vggface2/casia-webface
@@ -90,12 +94,20 @@ def alg_video_cut_face(work):
         }
         video_cut_face(input_data)
 
+    video = VideoFileClip(work.video.path)
+    video_duration = video.duration
+    video.close()
     logger = Logger(log_path, timestamp)
     TLRModal(work,
              _video_cut_face,
              fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
              logger=logger,
-             translate_func=work.translate
+             translate_func=work.translate,
+             rate=int(video_duration * 0.5),
+             error_message=work.translate("An error occurred, please try again!"),
+             messagebox_ok_button=work.translate("OK"),
+             messagebox_title=work.translate("Warning"),
+             bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
              )
 
     with open(json_path, "r", encoding=Config.ENCODING) as f:
@@ -194,7 +206,11 @@ def cut_video_cut_face(work, face_json, faces_checkbox):
              _video_cut_by_face,
              fg_color=(Config.MODAL_LIGHT, Config.MODAL_DARK),
              logger=logger,
-             translate_func=work.translate
+             translate_func=work.translate,
+             error_message=work.translate("An error occurred, please try again!"),
+             messagebox_ok_button=work.translate("OK"),
+             messagebox_title=work.translate("Warning"),
+             bitmap_path=os.path.join(Paths.STATIC, work.appimages.ICON_ICO_256)
              )
 
     # TODO: update work.video and update video table in project's DB
