@@ -92,19 +92,12 @@ Tailor 采用先进的技术，能有效提高视频的流畅度。让原本卡�
 ##### 字幕消除
 消除视频中的字幕。无论是自制视频想要重新编辑视频，还是想获得无字幕的纯净画面，此功能都能轻松应对。例如处理电影片段或教学视频，为您带来全新体验。
 
-<video controls>
-   <source src="assets/erase_subtitles.mp4" type="video/mp4">
-   字幕消除
-</video>
+<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113062631704831&bvid=BV1ibHeeqELE&cid=25693194696&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
 
 ##### 目标消除
 消除视频中期望消除的目标。只需轻轻点击鼠标，Tailor就能自动跟踪并消除视频中的目标，无论是不想要的路人、杂物，还是瑕疵，都能轻松去除。无需复杂操作，智能算法快速响应，让你的视频瞬间变得干净整洁。  
 
-
-<video controls>
-   <source src="assets/remove_target.mp4" type="video/mp4">
-   目标消除
-</video>
+<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113062648546404&bvid=BV1otHeeMEUV&cid=25693261513&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
 
 <a id="installation"></a>
 # 安装与运行
