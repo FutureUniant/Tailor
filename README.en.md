@@ -96,6 +96,9 @@ Eliminate the desired target in the video. With just a light click of the mouse,
 
 <img src="assets/remove_target.gif" height="200">
 
+##### VIDEO_OPTIMIZE_LOCAL_PROCESSING
+Local Processing function can perform visual focusing or color grayscale processing on specific characters, items, etc. Whether you want to highlight the protagonist in the frame or create a unique artistic atmosphere, it can be easily achieved, adding more creative elements to your video.  
+
 <a id="installation"></a>
 # Installation and Running
 Tailor offers two usage modes: User Mode and Developer Mode.  
