@@ -449,3 +449,33 @@ msgstr "Retain"
 
 msgid "Video Initial"
 msgstr "Video Initial"
+
+msgid "Video Alignment Method:"
+msgstr "Video Alignment Method:"
+
+msgid "Repeat"
+msgstr "Repeat"
+
+msgid "Align"
+msgstr "Align"
+
+msgid "Video Optimize Local Processing"
+msgstr "Video Optimize Local Processing"
+
+msgid "Localized Gray"
+msgstr "Localized Gray"
+
+msgid "Localized Color"
+msgstr "Localized Color"
+
+msgid "Please choose an action:"
+msgstr "Please choose an action:"
+
+msgid "Local Processing"
+msgstr "Local Processing"
+
+msgid "Select"
+msgstr "Select"
+
+msgid "Remove"
+msgstr "Remove"

@@ -449,3 +449,33 @@ msgstr "保留"
 
 msgid "Video Initial"
 msgstr "视频初始化"
+
+msgid "Video Alignment Method:"
+msgstr "视频时长对齐方法："
+
+msgid "Repeat"
+msgstr "视频重复"
+
+msgid "Align"
+msgstr "时长对齐"
+
+msgid "Video Optimize Local Processing"
+msgstr "局部处理"
+
+msgid "Localized Gray"
+msgstr "局部去色"
+
+msgid "Localized Color"
+msgstr "局部彩色"
+
+msgid "Please choose an action:"
+msgstr "请选择一个操作："
+
+msgid "Local Processing"
+msgstr "局部处理"
+
+msgid "Select"
+msgstr "选择"
+
+msgid "Remove"
+msgstr "去除"

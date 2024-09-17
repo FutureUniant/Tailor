@@ -2,6 +2,7 @@ import time
 import logging
 import datetime
 import tkinter
+import traceback
 from typing import Union, Tuple, Optional, Callable
 from threading import Thread
 from customtkinter import CTkProgressBar, CTkToplevel, CTkLabel
@@ -46,6 +47,7 @@ class TLRModal(CTkToplevel):
         self.translate_func = translate_func
 
         self.alive = True
+        self.create_time = datetime.datetime.now() - datetime.timedelta(seconds=1)
         self.text = tkinter.StringVar(value="")
 
         self._task_thread = Thread(target=self._wrapper_task)
@@ -61,7 +63,11 @@ class TLRModal(CTkToplevel):
         try:
             self.task()
             self.alive = False
-        except:
+        except Exception as e:
+            print(traceback.format_exc())
+            self.logger.write_log(e, log_level=logging.ERROR)
+            self.logger.write_log("=" * 20, log_level=logging.ERROR)
+            self.logger.write_log(traceback.format_exc(), log_level=logging.ERROR)
             message_box = TLRMessageBox(self,
                                         title=self.messagebox_title,
                                         message=f"{self.error_message}",
@@ -71,6 +77,7 @@ class TLRModal(CTkToplevel):
             x = self.winfo_x()
             y = self.winfo_y()
             message_box.geometry("+{}+{}".format(x, y))
+            self.alive = False
         try:
             if self.progressbar.winfo_exists():
                 self.progressbar.destroy()
@@ -87,7 +94,11 @@ class TLRModal(CTkToplevel):
         time_text = self.translate_func("s")
         while self.alive:
             log_time, log_level, log_content = self.logger.get_latest_log()
-            if log_time is None:
+            if log_time is None or log_time < self.create_time:
+                print("log_time")
+                print(log_time)
+                print("self.create_time")
+                print(self.create_time)
                 continue
             contents = log_content.strip().split(":", 5)
             progress_type = contents[0]
@@ -118,6 +129,10 @@ class TLRModal(CTkToplevel):
                     complete_percent = 100
                     pre_time = None
                     if current_stage >= total_stage:
+                        print("log_time, log_level, log_content")
+                        print(log_time, "\t", log_level, "\t", log_content)
+                        print("interval    current_stage, total_stage")
+                        print(current_stage, "\t", total_stage)
                         self.alive = False
                 else:
                     now_time = datetime.datetime.now()
@@ -134,6 +149,10 @@ class TLRModal(CTkToplevel):
                     remaining_time = 0.00
                     pre_time = None
                     if current_stage >= total_stage:
+                        print("log_time, log_level, log_content")
+                        print(log_time, "\t", log_level, "\t", log_content)
+                        print("follow     current_stage, total_stage")
+                        print(current_stage, "\t", total_stage)
                         self.alive = False
                 elif complete_percent <= 0:
                     remaining_time = 10

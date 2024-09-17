@@ -34,8 +34,16 @@ VIDEO_FILETYPES = {
     "zh_cn": filetypes("视频文件", VIDEO_EXTENSION, low_upper=True),
     "zh_tw": filetypes("視頻文件", VIDEO_EXTENSION, low_upper=True),
     "en_us": filetypes("Video File", VIDEO_EXTENSION, low_upper=True),
-
 }
+
+
+IMAGE_VIDEO_EXTENSION = IMAGE_EXTENSION + VIDEO_EXTENSION
+IMAGE_VIDEO_FILETYPES = {
+    "zh_cn": filetypes("图像视频文件", IMAGE_VIDEO_EXTENSION, low_upper=True),
+    "zh_tw": filetypes("圖像視頻文件", IMAGE_VIDEO_EXTENSION, low_upper=True),
+    "en_us": filetypes("Image Video File", IMAGE_VIDEO_EXTENSION, low_upper=True),
+}
+
 
 EXPORT_VIDEO_EXTENSION = [".mp4"]
 

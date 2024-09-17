@@ -66,6 +66,7 @@ class App(customtkinter.CTk, TailorTranslate):
 
         print("VERSION")
         print(VERSION.version)
+        self.version = VERSION.version
 
         self.iconbitmap(bitmap=os.path.join(Paths.STATIC, self.app_images.ICON_ICO_256))
         self.title("Tailor")

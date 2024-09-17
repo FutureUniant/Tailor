@@ -16,45 +16,59 @@ def change_background(input_data):
     video = VideoFileClip(video_path)
     fps = video.fps
     vw, vh = video.size
+
     input_data["input"]["fps"] = fps
 
-    result_type = input_data["input"]["result_type"]
-    if result_type == "compose":
-        image_path = input_data["input"]["image_path"]
-        temp_image_path = os.path.join(os.path.dirname(image_path), f"temp.{image_path.split('.')[-1]}")
-        reszie_type = input_data["config"]["resize"]
-
-        image = Image.open(image_path)
-        iw, ih = image.size
+    # save background after resize
+    background_type = input_data["input"]["background_type"]
+    background_path = input_data["input"]["background"]
+    temp_background_path = os.path.join(os.path.dirname(background_path), f"temp.{background_path.split('.')[-1]}")
+    if background_type == "image":
+        background_file = Image.open(background_path)
+        iw, ih = background_file.size
         ratio = max(vw / iw, vh / ih)
-        iw, ih = math.ceil(ratio * iw), math.ceil(ratio * ih)
-        image = image.resize((iw, ih))
+        bw, bh = math.ceil(ratio * iw), math.ceil(ratio * ih)
+    else:
+        background_file = VideoFileClip(background_path)
+        bvw, bvh = background_file.size
+        background_file.close()
+        ratio = max(vw / bvw, vh / bvh)
+        bw, bh = math.ceil(ratio * bvw), math.ceil(ratio * bvh)
+    resize_type = input_data["input"]["resize"]
+
+    if resize_type == "resize":
+        bw, bh = vw, vh
         left, top = 0, 0
-        if reszie_type == "resize":
-            image = image.resize((vw, vh))
-        elif reszie_type == "center":
-            left, top = int(0.5 * (iw - vw)), int(0.5 * (ih - vh))
-        elif reszie_type == "left-top":
-            left, top = 0, 0
-        elif reszie_type == "left-down":
-            left, top = 0, ih - vh
-        elif reszie_type == "right-top":
-            left, top = iw - vw, 0
-        elif reszie_type == "right-down":
-            left, top = iw - vw, ih - vh
-        elif reszie_type == "top-center":
-            left, top = int(0.5 * (iw - vw)), 0
-        elif reszie_type == "down-center":
-            left, top = int(0.5 * (iw - vw)), ih - vh
-        elif reszie_type == "left-center":
-            left, top = 0, int(0.5 * (ih - vh))
-        elif reszie_type == "right-center":
-            left, top = iw - vw, int(0.5 * (ih - vh))
+    elif resize_type == "center":
+        left, top = int(0.5 * (bw - vw)), int(0.5 * (bh - vh))
+    elif resize_type == "left-top":
+        left, top = 0, 0
+    elif resize_type == "left-down":
+        left, top = 0, bh - vh
+    elif resize_type == "right-top":
+        left, top = bw - vw, 0
+    elif resize_type == "right-down":
+        left, top = bw - vw, bh - vh
+    elif resize_type == "top-center":
+        left, top = int(0.5 * (bw - vw)), 0
+    elif resize_type == "down-center":
+        left, top = int(0.5 * (bw - vw)), bh - vh
+    elif resize_type == "left-center":
+        left, top = 0, int(0.5 * (bh - vh))
+    else:
+        # resize_type == "right-center"
+        left, top = bw - vw, int(0.5 * (bh - vh))
 
-        image = image.crop((left, top, left + vw, top + vh))
-        image.save(temp_image_path)
-        input_data["input"]["image_path"] = temp_image_path
+    if background_type == "image":
+        background_file = background_file.resize((bw, bh))
+        background_file = background_file.crop((left, top, left + vw, top + vh))
+        background_file.save(temp_background_path)
+    else:
+        background_file = VideoFileClip(background_path, target_resolution=(bh, bw))
+        background_file = background_file.crop(x1=left, y1=top, x2=left + vw, y2=top + vh)
+        background_file.write_videofile(temp_background_path)
 
+    input_data["input"]["background"] = temp_background_path
     mat_model = MattingModel(input_data["config"], logger)
     mat_path = mat_model.matting(input_data["input"], input_data["output"])
 

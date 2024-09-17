@@ -10,3 +10,4 @@ from app.template.function.video_optimize_erase_subtitles import alg_video_optim
 from app.template.function.video_optimize_fluency import alg_video_optimize_fluency
 from app.template.function.video_optimize_resolution import alg_video_optimize_resolution
 from app.template.function.video_optimize_remove_target import alg_video_optimize_remove_target
+from app.template.function.video_optimize_local_processing import alg_video_optimize_local_processing

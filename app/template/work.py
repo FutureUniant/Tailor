@@ -425,7 +425,7 @@ class WorkWindow(CTkToplevel, TailorTranslate):
         message_box = TLRMessageBox(self.master,
                                     icon="info",
                                     title=value,
-                                    message=self.translate("Tailor Version 0.1.4.\n"),
+                                    message=self.translate(f"Tailor Version {self.app.version}.\n"),
                                     button_text=[self.translate("OK")],
                                     bitmap_path=os.path.join(Paths.STATIC, self.appimages.ICON_ICO_256))
         self.dialog_show(message_box)

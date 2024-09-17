@@ -223,15 +223,15 @@ class TLRSingleTimeline(CTkFrame):
         self._play_frame.grid_columnconfigure(0, weight=1)
         self._play_frame.grid_columnconfigure(6, weight=1)
 
-        self.play_to_left_btn = CTkButton(self._play_frame, self._play_size[0], corner_radius=0, text="", fg_color=self._apply_appearance_mode(self._bg_color), image=self._play_to_left_image, hover_color=self._button_hover_color)
+        self.play_to_left_btn = CTkButton(self._play_frame, self._play_size[0], corner_radius=0, text="", fg_color=self._apply_appearance_mode(self._bg_color), image=self._play_to_left_image, hover_color=self._button_hover_color, state="disabled")
         self.play_to_left_btn.grid(row=0, column=1, padx=5)
-        self.backward_btn = CTkButton(self._play_frame, self._play_size[0], corner_radius=0, text="", fg_color=self._apply_appearance_mode(self._bg_color), image=self._backward_image, hover_color=self._button_hover_color)
+        self.backward_btn = CTkButton(self._play_frame, self._play_size[0], corner_radius=0, text="", fg_color=self._apply_appearance_mode(self._bg_color), image=self._backward_image, hover_color=self._button_hover_color, state="disabled")
         self.backward_btn.grid(row=0, column=2, padx=5)
-        self.play_or_pause_btn = CTkButton(self._play_frame, self._play_size[0], corner_radius=0, text="", fg_color=self._apply_appearance_mode(self._bg_color), image=self._play_image, hover_color=self._button_hover_color)
+        self.play_or_pause_btn = CTkButton(self._play_frame, self._play_size[0], corner_radius=0, text="", fg_color=self._apply_appearance_mode(self._bg_color), image=self._play_image, hover_color=self._button_hover_color, state="disabled")
         self.play_or_pause_btn.grid(row=0, column=3, padx=5)
-        self.forward_btn = CTkButton(self._play_frame, self._play_size[0], corner_radius=0, text="", fg_color=self._apply_appearance_mode(self._bg_color), image=self._forward_image, hover_color=self._button_hover_color)
+        self.forward_btn = CTkButton(self._play_frame, self._play_size[0], corner_radius=0, text="", fg_color=self._apply_appearance_mode(self._bg_color), image=self._forward_image, hover_color=self._button_hover_color, state="disabled")
         self.forward_btn.grid(row=0, column=4, padx=5)
-        self.play_to_right_btn = CTkButton(self._play_frame, self._play_size[0], corner_radius=0, text="", fg_color=self._apply_appearance_mode(self._bg_color), image=self._play_to_right_image, hover_color=self._button_hover_color)
+        self.play_to_right_btn = CTkButton(self._play_frame, self._play_size[0], corner_radius=0, text="", fg_color=self._apply_appearance_mode(self._bg_color), image=self._play_to_right_image, hover_color=self._button_hover_color, state="disabled")
         self.play_to_right_btn.grid(row=0, column=5, padx=5)
 
         # _tool_type => 0: select; 1: move; 2: cut;
@@ -662,6 +662,11 @@ class TLRSingleTimeline(CTkFrame):
             return self._playhead.get_value()
 
     def change_item(self, value_range, values):
+        self.play_to_left_btn.configure(state="normal")
+        self.backward_btn.configure(state="normal")
+        self.play_or_pause_btn.configure(state="normal")
+        self.forward_btn.configure(state="normal")
+        self.play_to_right_btn.configure(state="normal")
         if self._item is None:
             self._item = TLRTimelineItem(
                 self,

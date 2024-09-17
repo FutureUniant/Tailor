@@ -7,11 +7,10 @@ from PIL import Image,ImageFont,ImageDraw
 from app.src.utils.logger import Logger
 from moviepy.editor import VideoFileClip, ImageSequenceClip
 
-from app.src.algorithm.base.lama.lama import LaMa
 from app.src.algorithm.base.sam2.video_predictor import VideoPredictor
 
 
-class RemoveTarget:
+class LocalModel:
     def __init__(self, config, logger):
         self.logger = logger
         self.config = config
@@ -61,47 +60,45 @@ class RemoveTarget:
         mask_image = np.logical_or(mask_image, mask_logit)
         return mask_image
 
-    def remove(self, output_path):
-        if self.lama_model is None:
-            self.lama_model = LaMa(self.config["config"]["lama"], self.logger)
+    def processing(self, process_type, output_path):
+        self.logger.write_log("interval:3:1:1:0")
         if self.sam2_video_model is None:
             self.sam2_video_model = VideoPredictor(self.config["config"]["sam2"], self.logger)
             self.sam2_video_model.set_video(self.config["input"]["video_frame_path"])
-
-        self.logger.write_log("interval:3:1:1:0")
         video_segments = self.sam2_video_model.propagate_video()
         self.logger.write_log("interval:3:1:1:1")
-        remove_temp_dir = self.config["output"]["remove_temp_dir"]
+
+        process_temp_dir = self.config["output"]["process_temp_dir"]
         image_paths = list()
-        remove_num = len(video_segments)
-        self.logger.write_log(f"follow:3:2:{remove_num}:0")
+        process_num = len(video_segments)
+        self.logger.write_log(f"follow:3:2:{process_num}:0")
         for out_frame_idx, item in video_segments.items():
             mask_image = np.zeros((self.size[1], self.size[0], 1))
             for out_obj_id, out_mask in item.items():
                 mask_image = self._get_mask(mask_image, out_mask, self.size)
 
             frame_path = os.path.join(self.config["input"]["video_frame_path"], self.sam2_video_model.frame_names[out_frame_idx])
-            frame = Image.open(frame_path)
             name, _ = self.sam2_video_model.frame_names[out_frame_idx].rsplit(".", 1)
-            temp_image_path = os.path.join(remove_temp_dir, f"{name}.png")
-            if len(item.items()) > 0:
-                mask_image = np.expand_dims(mask_image.squeeze(), axis=-1)
-                mask = np.ones((self.size[1], self.size[0], 3)) * 255
-                mask_image = (mask_image * mask).astype(dtype=np.uint8)
-                kernel = np.ones((21, 21), np.uint8)
-                mask_image = cv2.dilate(mask_image, kernel, iterations=1)
-                frame_info = {
-                    "image": frame,
-                    "mask": mask_image
-                }
-                result = self.lama_model.infer(frame_info)
-                output_image = result["image"]
-                Image.fromarray(output_image[:, :, ::-1]).save(temp_image_path)
+            temp_image_path = os.path.join(process_temp_dir, f"{name}.png")
+
+            frame = Image.open(frame_path)
+            gray_frame = frame.convert("L").convert("RGB")
+            color_frame = frame
+            if process_type == "gray":
+                background = np.array(color_frame)
+                foreground = np.array(gray_frame)
             else:
-                frame.save(temp_image_path)
-            self.logger.write_log(f"follow:2:1:{remove_num}:{out_frame_idx+1}")
+                background = np.array(gray_frame)
+                foreground = np.array(color_frame)
+
+            if len(item.items()) > 0:
+                output_image = mask_image * foreground + (1 - mask_image) * background
+                Image.fromarray(np.uint8(output_image)).save(temp_image_path)
+            else:
+                Image.fromarray(background).save(temp_image_path)
+            self.logger.write_log(f"follow:3:2:{process_num}:{out_frame_idx+1}")
             image_paths.append(temp_image_path)
-        self.logger.write_log(f"follow:3:2:{remove_num}:{remove_num}")
+        self.logger.write_log(f"follow:3:2:{process_num}:{process_num}")
 
         self.logger.write_log(f"interval:3:3:1:0")
         video_path = self.config["input"]["video_path"]
@@ -110,44 +107,45 @@ class RemoveTarget:
         output_video = ImageSequenceClip(image_paths, fps=fps)
         output_video = output_video.set_audio(video.audio)
         output_video.write_videofile(output_path)
-        shutil.rmtree(remove_temp_dir, ignore_errors=True)
+        shutil.rmtree(process_temp_dir, ignore_errors=True)
         video.close()
         self.logger.write_log(f"interval:3:3:1:1")
 
 
-def video_optimize_remove_target(input_data, remove_target=None):
+def video_optimize_local_processing(input_data, local_model=None):
 
     timestamp = input_data["input"]["timestamp"]
     log_path = input_data["input"]["log_path"]
     logger = Logger(log_path, timestamp)
-    if remove_target is None:
-        remove_target = RemoveTarget(input_data, logger)
+    if local_model is None:
+        local_model = LocalModel(input_data, logger)
     else:
-        config = remove_target.config
+        config = local_model.config
         config.update(input_data)
-        remove_target.config = config
+        local_model.config = config
+
     opt_type = input_data["type"]
     if opt_type == "add":
         # Add a point
         prompt = input_data["input"]["prompt"]
-        _, out_mask_logits = remove_target.add_point(
+        _, out_mask_logits = local_model.add_point(
             prompt["data"],
             prompt["value"],
             input_data["input"]["ann_frame_idx"],
         )
-        show_frame = remove_target.show_segment_frame(out_mask_logits, input_data["input"]["ann_frame_idx"])
+        show_frame = local_model.show_segment_frame(out_mask_logits, input_data["input"]["ann_frame_idx"])
         show_frame.save(input_data["output"]["show_temp_image"])
     elif opt_type == "remove":
         # Remove a point
         prompts = input_data["input"]["prompts"]
         ann_frame_idx = input_data["input"]["ann_frame_idx"]
-        remove_target.reset()
+        local_model.reset()
         out_mask_logits = None
         for frame_id, frame_prompts in prompts.items():
             if frame_id == ann_frame_idx:
                 for prompt in frame_prompts:
                     if prompt["type"] == "point":
-                        _, out_mask_logits = remove_target.add_point(
+                        _, out_mask_logits = local_model.add_point(
                             np.array(prompt["data"]),
                             np.array([prompt["value"]]),
                             frame_id,
@@ -155,17 +153,17 @@ def video_optimize_remove_target(input_data, remove_target=None):
             else:
                 for prompt in frame_prompts:
                     if prompt["type"] == "point":
-                        _, _ = remove_target.add_point(
+                        _, _ = local_model.add_point(
                             np.array(prompt["data"]),
                             np.array([prompt["value"]]),
                             frame_id,
                         )
         if out_mask_logits is not None:
-            show_frame = remove_target.show_segment_frame(out_mask_logits, input_data["input"]["ann_frame_idx"])
+            show_frame = local_model.show_segment_frame(out_mask_logits, input_data["input"]["ann_frame_idx"])
             show_frame.save(input_data["output"]["show_temp_image"])
     elif opt_type == "initial":
-        remove_target.initial()
+        local_model.initial()
     else:
-        remove_target.remove(input_data["output"]["video_path"])
-    return remove_target
+        local_model.processing(input_data["input"]["process_type"], input_data["output"]["video_path"])
+    return local_model
 
